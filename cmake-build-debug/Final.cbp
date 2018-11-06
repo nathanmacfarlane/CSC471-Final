@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="Final"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\lab5\;CMake Files\..\lab5\OpenGL_MAC\;CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\;CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\CMake\;CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\CMake\modules\;CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\src\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Final">
+				<Option output="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Final" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/Final/ext/glad/include"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/include"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 Final"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Final/fast">
+				<Option output="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Final" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/Final/ext/glad/include"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/include"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 Final/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/Final/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="uninstall">
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/Makefile&quot;  VERBOSE=1 uninstall"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="glfw">
+				<Option output="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/libglfw3.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-D_GLFW_USE_CONFIG_H"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/Final/ext/glad/include"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/include"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/Makefile&quot;  VERBOSE=1 glfw"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="glfw/fast">
+				<Option output="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/libglfw3.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-D_GLFW_USE_CONFIG_H"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/Final/ext/glad/include"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/include"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src"/>
+					<Add directory="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/Makefile&quot;  VERBOSE=1 glfw/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/ext/glad/include/KHR/khrplatform.h">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/ext/glad/include/glad/glad.h">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/ext/glad/src/glad.c">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/resources/shader_fragment.glsl">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/resources/shader_vertex.glsl">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/GLSL.cpp">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/GLSL.h">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/MatrixStack.cpp">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/MatrixStack.h">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/Program.cpp">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/Program.h">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/Shape.cpp">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/Shape.h">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/WindowManager.cpp">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/WindowManager.h">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/main.cpp">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/src/tiny_obj_loader.h">
+			<Option target="Final"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/debug/src/glfw_config.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/include/GLFW/glfw3.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/include/GLFW/glfw3native.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/cocoa_init.m">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/cocoa_joystick.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/cocoa_joystick.m">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/cocoa_monitor.m">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/cocoa_platform.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/cocoa_time.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/cocoa_window.m">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/init.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/input.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/internal.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/monitor.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/nsgl_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/nsgl_context.m">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/posix_tls.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/posix_tls.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/vulkan.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/src/window.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/../lab5/OpenGL_MAC/glfw-3.2.1/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/../lab5/OpenGL_MAC/glfw-3.2.1/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/../lab5/OpenGL_MAC/glfw-3.2.1/CMake/modules/FindVulkan.cmake">
+			<Option virtualFolder="CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\CMake\modules\"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/../lab5/OpenGL_MAC/glfw-3.2.1/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\src\"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/../lab5/OpenGL_MAC/glfw-3.2.1/src/glfw3.pc.in">
+			<Option virtualFolder="CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\src\"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/../lab5/OpenGL_MAC/glfw-3.2.1/src/glfw3Config.cmake.in">
+			<Option virtualFolder="CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\src\"/>
+		</Unit>
+		<Unit filename="/Users/nathanmacfarlane/School/CSC471/Final/../lab5/OpenGL_MAC/glfw-3.2.1/src/glfw_config.h.in">
+			<Option virtualFolder="CMake Files\..\lab5\OpenGL_MAC\glfw-3.2.1\src\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
