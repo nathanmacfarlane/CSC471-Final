@@ -138,6 +138,7 @@ CMakeFiles/Final.dir/src/main.cpp.o: ../src/Program.h
 CMakeFiles/Final.dir/src/main.cpp.o: ../src/Shape.h
 CMakeFiles/Final.dir/src/main.cpp.o: ../src/WindowManager.h
 CMakeFiles/Final.dir/src/main.cpp.o: ../src/main.cpp
+CMakeFiles/Final.dir/src/main.cpp.o: ../src/stb_image.h
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glfw-3.2.1/include/GLFW/glfw3.h
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/common.hpp
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/detail/_fixes.hpp

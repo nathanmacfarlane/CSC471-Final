@@ -209,7 +209,7 @@ void Shape::init()
 		assert(glGetError() == GL_NO_ERROR);
 	}
 }
-void Shape::draw(const shared_ptr<Program> prog) const
+void Shape::draw(const shared_ptr<Program> prog,bool use_extern_texures) const
 {
 	for (int i = 0; i < obj_count; i++)
 
@@ -250,12 +250,14 @@ void Shape::draw(const shared_ptr<Program> prog) const
 
 		//texture
 		
-
-		int textureindex = materialIDs[i];
-		if (textureindex >= 0)
+		if (!use_extern_texures)
 		{
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, textureIDs[textureindex]);
+			int textureindex = materialIDs[i];
+			if (textureindex >= 0)
+			{
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, textureIDs[textureindex]);
+			}
 		}
 		// Draw
 		glDrawElements(GL_TRIANGLES, (int)eleBuf[i].size(), GL_UNSIGNED_INT, (const void *)0);
