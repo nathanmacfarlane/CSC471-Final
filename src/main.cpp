@@ -43,16 +43,16 @@ public:
 	{
 		float speed = 0;
 		if (w == 1)
-			speed = -10*ftime;
+			speed = -3*ftime;
 		else if (s == 1)
-			speed = 10*ftime;
+			speed = 3*ftime;
 
 		float yangle=0;
 
 		if (a == 1)
-			yangle = -2*ftime;
+			yangle = -1*ftime;
 		else if(d==1)
-			yangle = 2*ftime;
+			yangle = 1*ftime;
 
         double xangle = 1.5;
         rot.x = xangle;
@@ -79,7 +79,7 @@ public:
 	WindowManager * windowManager = nullptr;
 
 	// Our shader program
-	std::shared_ptr<Program> prog, progLamp, progCityGround, progCityBuilding;
+	std::shared_ptr<Program> prog, progLamp, progCityGround, progCityBuilding, progLambo;
 
 	GLuint VAOBox;
 	GLuint VBOBoxPos, VBOBoxColor, VBOBoxIndex;
@@ -154,6 +154,13 @@ public:
 		shape->resize();
 		shape->init();
 		prog->unbind();
+
+        progLambo->bind();
+        shape = make_shared<Shape>();
+        shape->loadMesh(resourceDirectory + "/lambo.obj");
+        shape->resize();
+        shape->init();
+        progLambo->unbind();
 
 //        int width, height, channels;
 //        char filepath[1000];
@@ -374,6 +381,15 @@ public:
 		prog->addAttribute("vertPos");
 		prog->addAttribute("vertNor");
 
+        progLambo = std::make_shared<Program>();
+        progLambo->setVerbose(true);
+        progLambo->setShaderNames(resourceDirectory + "/shader_vertex_lambo.glsl", resourceDirectory + "/shader_fragment_lambo.glsl");
+        progLambo->init();
+        progLambo->addUniform("P");
+        progLambo->addUniform("V");
+        progLambo->addUniform("M");
+        progLambo->addAttribute("vertPos");
+
         progCityGround = std::make_shared<Program>();
         progCityGround->setVerbose(true);
         progCityGround->setShaderNames(resourceDirectory + "/shader_vertex_ground.glsl", resourceDirectory + "/shader_fragment_ground.glsl");
@@ -488,7 +504,7 @@ public:
 //        glUniformMatrix4fv(progCityGround->getUniform("M"), 1, GL_FALSE, &M[0][0]);
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
 //        progCityGround->unbind();
-
+//
         /************************ City Building ********************/
         progCityBuilding->bind();
         glUniformMatrix4fv(progCityBuilding->getUniform("P"), 1, GL_FALSE, &P[0][0]);
@@ -504,6 +520,22 @@ public:
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
         }
         progCityBuilding->unbind();
+
+//        cout << "mycam.rot.x: " << mycam.rot.x << "mycam.rot.y: " << mycam.rot.y << "mycam.rot.z: " << mycam.rot.z << endl;
+
+        /************************ Lambo ********************/
+        progLambo->bind();
+        glUniformMatrix4fv(progLambo->getUniform("P"), 1, GL_FALSE, &P[0][0]);
+        glUniformMatrix4fv(progLambo->getUniform("V"), 1, GL_FALSE, &V[0][0]);
+        glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        S = scale(mat4(1.0f), vec3(2, 2, 2));
+        T = translate(mat4(1.0f), vec3(0, -40, 0) - mycam.pos);
+        R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
+        R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
+        M = T * S * R2 * R;
+        glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        shape->draw(progLambo, false);
+        progLambo->unbind();
 
         glBindVertexArray(0);
 
