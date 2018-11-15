@@ -97,6 +97,8 @@ glm/gtc/type_ptr.hpp
 -
 glm/gtc/matrix_transform.hpp
 -
+stb_image.h
+/Users/nathanmacfarlane/School/CSC471/Final/src/stb_image.h
 
 /Users/nathanmacfarlane/School/CSC471/Final/src/stb_image.h
 stb_image.h

@@ -19,6 +19,9 @@ using namespace std;
 using namespace glm;
 shared_ptr<Shape> shape, shapeLamp;
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 
 double get_last_elapsed_time()
 {
@@ -37,7 +40,7 @@ public:
 	{
 		w = a = s = d = 0;
 		rot = glm::vec3(0, 0, 0);
-        pos = glm::vec3(-18, -25, -17);
+        pos = glm::vec3(-18, -14, -17);
 	}
 	glm::mat4 process(double ftime)
 	{
@@ -50,9 +53,9 @@ public:
 		float yangle=0;
 
 		if (a == 1)
-			yangle = -1*ftime;
+			yangle = -1.5*ftime;
 		else if(d==1)
-			yangle = 1*ftime;
+			yangle = 1.5*ftime;
 
         double xangle = 1.5;
         rot.x = xangle;
@@ -85,7 +88,7 @@ public:
 	GLuint VBOBoxPos, VBOBoxColor, VBOBoxIndex;
 
 	//texture data
-	GLuint Texture;
+	GLuint Texture, Texture2;
 
     vector<vec3> allBuildings;
 
@@ -95,15 +98,16 @@ public:
 		{
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
-
-		if (key == GLFW_KEY_W && action == GLFW_PRESS)
-		{
-			mycam.w = 1;
-		}
-		if (key == GLFW_KEY_W && action == GLFW_RELEASE)
-		{
-			mycam.w = 0;
-		}
+		mycam.w = 1;
+//
+//		if (key == GLFW_KEY_W && action == GLFW_PRESS)
+//		{
+//			mycam.w = 1;
+//		}
+//		if (key == GLFW_KEY_W && action == GLFW_RELEASE)
+//		{
+//			mycam.w = 0;
+//		}
 		if (key == GLFW_KEY_S && action == GLFW_PRESS)
 		{
 			mycam.s = 1;
@@ -161,6 +165,43 @@ public:
         shape->resize();
         shape->init();
         progLambo->unbind();
+
+        int width, height, channels;
+        char filepath[1000];
+
+        //texture 1
+        string str = resourceDirectory + "/lambo_diffuse.jpg";
+        strcpy(filepath, str.c_str());
+        unsigned char* data = stbi_load(filepath, &width, &height, &channels, 4);
+        glGenTextures(1, &Texture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, Texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        //texture 2
+        str = resourceDirectory + "/lambo_spec.jpg";
+        strcpy(filepath, str.c_str());
+        data = stbi_load(filepath, &width, &height, &channels, 4);
+        glGenTextures(1, &Texture2);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, Texture2);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        //[TWOTEXTURES]
+        GLuint Tex1Location = glGetUniformLocation(prog->pid, "tex");
+        GLuint Tex2Location = glGetUniformLocation(prog->pid, "tex2");
+        glUseProgram(progLambo->pid);
+        glUniform1i(Tex1Location, 0);
+        glUniform1i(Tex2Location, 1);
 
 //        int width, height, channels;
 //        char filepath[1000];
@@ -263,25 +304,36 @@ public:
             }
         }
 
+        stack<int> maze;
+//        maze = getMaze(rowColNum);
+        vector<vec3> saved = allBuildings;
+        while (maze.size() < rowColNum*3) {
+            allBuildings = saved;
+            maze = getMaze(rowColNum);
+        }
+
+	}
+
+	stack<int> getMaze(int size) {
         #define EMPTY vec3(900,900,900)
 
-		srand(time(NULL));
+        srand(time(NULL));
 
-		stack <int> path;
+        stack <int> path;
 
-		int currentCell = 20*9;
-		path.push(currentCell);
-		for (int i = 0; i < 4; i++) {
-			allBuildings[currentCell] = EMPTY;
-			currentCell = getUpIndex(rowColNum, currentCell);
-			path.push(currentCell);
-		}
-		allBuildings[currentCell] = EMPTY;
+        int currentCell = size*((size/2)-1);
+        path.push(currentCell);
+        for (int i = 0; i < 4; i++) {
+            allBuildings[currentCell] = EMPTY;
+            currentCell = getUpIndex(size, currentCell);
+            path.push(currentCell);
+        }
+        allBuildings[currentCell] = EMPTY;
         path.push(currentCell);
 
-        while(getUpIndex(rowColNum, currentCell) >= 0 && getLeftIndex(rowColNum, currentCell) >= 0 && getRightIndex(rowColNum, currentCell) >= 0) {
-            int temp = getRandomNeighbor(rowColNum, currentCell);
-            if (temp > -1 && getNumSurroundingCells(rowColNum, temp) > 1 && getDownIndex(rowColNum, temp) > -1) {
+        while(getUpIndex(size, currentCell) >= 0 && getLeftIndex(size, currentCell) >= 0 && getRightIndex(size, currentCell) >= 0) {
+            int temp = getRandomNeighbor(size, currentCell);
+            if (temp > -1 && getNumSurroundingCells(size, temp) > 1 && getDownIndex(size, temp) > -1) {
                 currentCell = temp;
                 allBuildings[currentCell] = EMPTY;
                 path.push(currentCell);
@@ -294,7 +346,7 @@ public:
                 }
             }
         }
-
+        return path;
 	}
 
 	int getNumSurroundingCells(int size, int index) {
@@ -389,6 +441,8 @@ public:
         progLambo->addUniform("V");
         progLambo->addUniform("M");
         progLambo->addAttribute("vertPos");
+        progLambo->addAttribute("vertTex");
+        progLambo->addAttribute("vertNor");
 
         progCityGround = std::make_shared<Program>();
         progCityGround->setVerbose(true);
@@ -520,8 +574,6 @@ public:
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
         }
         progCityBuilding->unbind();
-
-//        cout << "mycam.rot.x: " << mycam.rot.x << "mycam.rot.y: " << mycam.rot.y << "mycam.rot.z: " << mycam.rot.z << endl;
 
         /************************ Lambo ********************/
         progLambo->bind();
