@@ -30,7 +30,14 @@ struct GameStats {
 	int right;
 	bool playing;
 	int size;
+	bool canGoForward;
+	bool canGoBackward;
+	bool canGoLeft;
+	bool canGoRight;
 };
+
+bool shouldMoveCar = true;
+GameStats gameStats;
 
 
 double get_last_elapsed_time()
@@ -55,9 +62,9 @@ public:
 	glm::mat4 process(double ftime)
 	{
 		float speed = 0;
-		if (w == 1)
+		if (w == 1 && gameStats.canGoForward)
 			speed = -6*ftime;
-		else if (s == 1)
+		else if (s == 1 && gameStats.canGoBackward)
 			speed = 6*ftime;
 
 		float yangle=0;
@@ -83,7 +90,6 @@ public:
 };
 
 camera mycam;
-GameStats gameStats;
 
 class Application : public EventCallbacks
 {
@@ -304,6 +310,10 @@ public:
 		gameStats.bottom = 16 + -rowColNum*2;
 		gameStats.playing = true;
 		gameStats.size = rowColNum;
+		gameStats.canGoForward = true;
+		gameStats.canGoLeft = true;
+		gameStats.canGoRight = true;
+		gameStats.canGoBackward = false;
 
         // populate buildings
         for (int x = 0; x < rowColNum; x++) {
@@ -534,11 +544,9 @@ public:
 		P = glm::perspective((float)(3.14159 / 4.), (float)((float)width/ (float)height), 0.1f, 1000.0f); //so much type casting... GLM metods are quite funny ones
 
 		V = mycam.process(frametime);
-
 //		/******************************* CITY ******************************/
 //		prog->bind();
 //        vec3 temp = vec3(-mycam.pos.x, -mycam.pos.y, -mycam.pos.z);
-//		V = mycam.process(frametime);
 //		//send the matrices to the shaders
 //		glUniformMatrix4fv(prog->getUniform("P"), 1, GL_FALSE, &P[0][0]);
 //		glUniformMatrix4fv(prog->getUniform("V"), 1, GL_FALSE, &V[0][0]);
@@ -588,10 +596,27 @@ public:
 //		} else if (mycam.pos.z - 7 > gameStats.top) {
 //			gameStats.playing = false;
 //		}
-		int row = round(-mycam.pos.x + 1)/2;
-		int col = round(mycam.pos.z + 16)/2;
-		if (!(allBuildings[col+row*20].x > 800 && allBuildings[col+row*20].y > 800 && allBuildings[col+row*20].z > 800)) {
-			cout << "collision" << endl;
+
+//		cout << "row: " << row << " col: " << col << endl;
+
+		cout << "camrot.y: " << abs(sin(mycam.rot.y)) << endl;
+		float rotateBuffer = abs(sin(mycam.rot.y))/2;
+		int toprow = round(-mycam.pos.x + 1)/2;
+		int topcol = round(mycam.pos.z + 17.5 - rotateBuffer)/2;
+
+		int bottomrow = round(-mycam.pos.x + 1)/2;
+		int bottomcol = round(mycam.pos.z + 15.7 - rotateBuffer)/2;
+
+		if (!(allBuildings[topcol+toprow*20].x > 800 && allBuildings[topcol+toprow*20].y > 800 && allBuildings[topcol+toprow*20].z > 800)) {
+			gameStats.canGoForward = false;
+			gameStats.canGoBackward = true;
+		} else if (!(allBuildings[bottomcol+bottomrow*20].x > 800 && allBuildings[bottomcol+bottomrow*20].y > 800 && allBuildings[bottomcol+bottomrow*20].z > 800)) {
+			shouldMoveCar = false;
+			gameStats.canGoForward = true;
+			gameStats.canGoBackward = false;
+		} else {
+			gameStats.canGoForward = true;
+			gameStats.canGoBackward = true;
 		}
 
 		/************************ Lambo ********************/
