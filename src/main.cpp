@@ -20,6 +20,7 @@ using namespace glm;
 shared_ptr<Shape> shape, shapeLamp;
 
 #define STB_IMAGE_IMPLEMENTATION
+#define EMPTY vec3(900,900,900)
 #include "stb_image.h"
 
 struct GameStats {
@@ -28,6 +29,7 @@ struct GameStats {
 	int left;
 	int right;
 	bool playing;
+	int size;
 };
 
 
@@ -54,9 +56,9 @@ public:
 	{
 		float speed = 0;
 		if (w == 1)
-			speed = -3*ftime;
+			speed = -6*ftime;
 		else if (s == 1)
-			speed = 3*ftime;
+			speed = 6*ftime;
 
 		float yangle=0;
 
@@ -301,6 +303,7 @@ public:
 		gameStats.right = rowColNum*2;
 		gameStats.bottom = 16 + -rowColNum*2;
 		gameStats.playing = true;
+		gameStats.size = rowColNum;
 
         // populate buildings
         for (int x = 0; x < rowColNum; x++) {
@@ -320,8 +323,16 @@ public:
 
 	}
 
+//	void isBuildingAtPos(vec3 pos) {
+//		for (int i = 0; i < allBuildings.size(); i++) {
+//			vec3 temp = vec3(allBuildings[i].x/2, pos.y, (allBuildings[i].z-16)/-2);
+//			if (distance(pos, temp) < 0.1) {
+//				cout << "distance: " << distance(pos, temp) << endl;
+//			}
+//		}
+//	}
+
 	stack<int> getMaze(int size) {
-        #define EMPTY vec3(900,900,900)
 
         srand(time(NULL));
 
@@ -330,18 +341,18 @@ public:
         int currentCell = size*((size/2)-1);
         path.push(currentCell);
         for (int i = 0; i < 4; i++) {
-            allBuildings[currentCell] = EMPTY;
+            allBuildings[currentCell] = vec3(900,900,900);
             currentCell = getUpIndex(size, currentCell);
             path.push(currentCell);
         }
-        allBuildings[currentCell] = EMPTY;
+        allBuildings[currentCell] = vec3(900,900,900);
         path.push(currentCell);
 
         while(getUpIndex(size, currentCell) >= 0 && getLeftIndex(size, currentCell) >= 0 && getRightIndex(size, currentCell) >= 0) {
             int temp = getRandomNeighbor(size, currentCell);
             if (temp > -1 && getNumSurroundingCells(size, temp) > 1 && getDownIndex(size, temp) > -1) {
                 currentCell = temp;
-                allBuildings[currentCell] = EMPTY;
+                allBuildings[currentCell] = vec3(900,900,900);
                 path.push(currentCell);
             } else {
                 if (!path.empty()) {
@@ -568,18 +579,36 @@ public:
 //        progCityGround->unbind();
 
 
-		if (-mycam.pos.x < gameStats.left) {
-			gameStats.playing = false;
+//		if (-mycam.pos.x < gameStats.left) {
+//			gameStats.playing = false;
+//		} else if (-mycam.pos.x > gameStats.right) {
+//			gameStats.playing = false;
+//		} else if (mycam.pos.z - 7 < gameStats.bottom) {
+//			cout << "leaving maze on bottom!" << endl;
+//		} else if (mycam.pos.z - 7 > gameStats.top) {
+//			gameStats.playing = false;
+//		}
+		int row = round(-mycam.pos.x + 1)/2;
+		int col = round(mycam.pos.z + 16)/2;
+		if (!(allBuildings[col+row*20].x > 800 && allBuildings[col+row*20].y > 800 && allBuildings[col+row*20].z > 800)) {
+			cout << "collision" << endl;
 		}
-		if (-mycam.pos.x > gameStats.right) {
-			gameStats.playing = false;
-		}
-		if (mycam.pos.z - 7 < gameStats.bottom) {
-			cout << "leaving maze on bottom!" << endl;
-		}
-		if (mycam.pos.z - 7 > gameStats.top) {
-			gameStats.playing = false;
-		}
+
+		/************************ Lambo ********************/
+		progLambo->bind();
+		glUniformMatrix4fv(progLambo->getUniform("P"), 1, GL_FALSE, &P[0][0]);
+		glUniformMatrix4fv(progLambo->getUniform("V"), 1, GL_FALSE, &V[0][0]);
+		glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+		S = scale(mat4(1.0f), vec3(2, 2, 2));
+		T = translate(mat4(1.0f), vec3(0, -40, 0) - mycam.pos);
+		R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
+		R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
+		M = T * S * R2 * R;
+		mat4 test = M;
+		glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+		glUniform3fv(progLambo->getUniform("campos"), 1, &mycam.pos[0]);
+		shape->draw(progLambo, false);
+		progLambo->unbind();
 
         /************************ City Building ********************/
         progCityBuilding->bind();
@@ -596,21 +625,6 @@ public:
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
         }
         progCityBuilding->unbind();
-
-        /************************ Lambo ********************/
-        progLambo->bind();
-        glUniformMatrix4fv(progLambo->getUniform("P"), 1, GL_FALSE, &P[0][0]);
-        glUniformMatrix4fv(progLambo->getUniform("V"), 1, GL_FALSE, &V[0][0]);
-        glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        S = scale(mat4(1.0f), vec3(2, 2, 2));
-        T = translate(mat4(1.0f), vec3(0, -40, 0) - mycam.pos);
-        R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
-        R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
-        M = T * S * R2 * R;
-        glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        glUniform3fv(progLambo->getUniform("campos"), 1, &mycam.pos[0]);
-        shape->draw(progLambo, false);
-        progLambo->unbind();
 
         glBindVertexArray(0);
 

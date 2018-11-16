@@ -14,9 +14,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="342d2bae-b3f9-4b3b-8235-519c57c04dbf" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/main.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Final" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Final" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -55,7 +53,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="cpp" value="8496" />
+          <entry key="cpp" value="9491" />
           <entry key="glsl" value="2267" />
           <entry key="h" value="3" />
         </counts>
@@ -64,7 +62,7 @@
         <counts>
           <entry key="Doxygen file" value="3" />
           <entry key="GLSL shader file" value="2267" />
-          <entry key="ObjectiveC" value="8496" />
+          <entry key="ObjectiveC" value="9491" />
         </counts>
       </usages-collector>
     </session>
@@ -74,8 +72,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="491">
-              <caret line="134" column="9" selection-start-line="134" selection-start-column="9" selection-end-line="134" selection-end-column="9" />
+            <state relative-caret-position="476">
+              <caret line="594" column="9" selection-start-line="594" selection-start-column="9" selection-end-line="594" selection-end-column="9" />
               <folding>
                 <element signature="e#39#58#0" expanded="true" />
                 <element signature="e#238#269#0" expanded="true" />
@@ -256,12 +254,12 @@
       <workItem from="1542213081076" duration="9833000" />
       <workItem from="1542235840534" duration="1479000" />
       <workItem from="1542260097255" duration="11854000" />
-      <workItem from="1542347646147" duration="3164000" />
+      <workItem from="1542347646147" duration="8085000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="57227000" />
+    <option name="totallyTimeSpent" value="62148000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-19" y="23" width="1440" height="877" extended-state="0" />
@@ -272,7 +270,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.21401274" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.17961784" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -420,8 +418,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="491">
-          <caret line="134" column="9" selection-start-line="134" selection-start-column="9" selection-end-line="134" selection-end-column="9" />
+        <state relative-caret-position="476">
+          <caret line="594" column="9" selection-start-line="594" selection-start-column="9" selection-end-line="594" selection-end-column="9" />
           <folding>
             <element signature="e#39#58#0" expanded="true" />
             <element signature="e#238#269#0" expanded="true" />
