@@ -197,8 +197,8 @@ public:
         glGenerateMipmap(GL_TEXTURE_2D);
 
         //[TWOTEXTURES]
-        GLuint Tex1Location = glGetUniformLocation(prog->pid, "tex");
-        GLuint Tex2Location = glGetUniformLocation(prog->pid, "tex2");
+        GLuint Tex1Location = glGetUniformLocation(progLambo->pid, "tex");
+        GLuint Tex2Location = glGetUniformLocation(progLambo->pid, "tex2");
         glUseProgram(progLambo->pid);
         glUniform1i(Tex1Location, 0);
         glUniform1i(Tex2Location, 1);
@@ -305,7 +305,6 @@ public:
         }
 
         stack<int> maze;
-//        maze = getMaze(rowColNum);
         vector<vec3> saved = allBuildings;
         while (maze.size() < rowColNum*3) {
             allBuildings = saved;
@@ -440,9 +439,11 @@ public:
         progLambo->addUniform("P");
         progLambo->addUniform("V");
         progLambo->addUniform("M");
+        progLambo->addUniform("campos");
         progLambo->addAttribute("vertPos");
         progLambo->addAttribute("vertTex");
         progLambo->addAttribute("vertNor");
+
 
         progCityGround = std::make_shared<Program>();
         progCityGround->setVerbose(true);
@@ -558,7 +559,7 @@ public:
 //        glUniformMatrix4fv(progCityGround->getUniform("M"), 1, GL_FALSE, &M[0][0]);
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
 //        progCityGround->unbind();
-//
+
         /************************ City Building ********************/
         progCityBuilding->bind();
         glUniformMatrix4fv(progCityBuilding->getUniform("P"), 1, GL_FALSE, &P[0][0]);
@@ -586,6 +587,7 @@ public:
         R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
         M = T * S * R2 * R;
         glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glUniform3fv(progLambo->getUniform("campos"), 1, &mycam.pos[0]);
         shape->draw(progLambo, false);
         progLambo->unbind();
 
