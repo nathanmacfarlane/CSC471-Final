@@ -22,6 +22,14 @@ shared_ptr<Shape> shape, shapeLamp;
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+struct GameStats {
+	int top;
+	int bottom;
+	int left;
+	int right;
+	bool playing;
+};
+
 
 double get_last_elapsed_time()
 {
@@ -73,6 +81,7 @@ public:
 };
 
 camera mycam;
+GameStats gameStats;
 
 class Application : public EventCallbacks
 {
@@ -94,43 +103,35 @@ public:
 
 	void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 	{
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		{
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-		mycam.w = 1;
-//
-//		if (key == GLFW_KEY_W && action == GLFW_PRESS)
-//		{
-//			mycam.w = 1;
-//		}
-//		if (key == GLFW_KEY_W && action == GLFW_RELEASE)
-//		{
-//			mycam.w = 0;
-//		}
-		if (key == GLFW_KEY_S && action == GLFW_PRESS)
-		{
-			mycam.s = 1;
-		}
-		if (key == GLFW_KEY_S && action == GLFW_RELEASE)
-		{
-			mycam.s = 0;
-		}
-		if (key == GLFW_KEY_A && action == GLFW_PRESS)
-		{
-			mycam.a = 1;
-		}
-		if (key == GLFW_KEY_A && action == GLFW_RELEASE)
-		{
-			mycam.a = 0;
-		}
-		if (key == GLFW_KEY_D && action == GLFW_PRESS)
-		{
-			mycam.d = 1;
-		}
-		if (key == GLFW_KEY_D && action == GLFW_RELEASE)
-		{
-			mycam.d = 0;
+
+		if (gameStats.playing) {
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+				glfwSetWindowShouldClose(window, GL_TRUE);
+			}
+			if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+				mycam.w = 1;
+			}
+			if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+				mycam.w = 0;
+			}
+			if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+				mycam.s = 1;
+			}
+			if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+				mycam.s = 0;
+			}
+			if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+				mycam.a = 1;
+			}
+			if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+				mycam.a = 0;
+			}
+			if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+				mycam.d = 1;
+			}
+			if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+				mycam.d = 0;
+			}
 		}
 	}
 
@@ -294,6 +295,12 @@ public:
         progLamp->unbind();
 
         int rowColNum = 20;
+
+		gameStats.top = 16;
+		gameStats.left = 0;
+		gameStats.right = rowColNum*2;
+		gameStats.bottom = 16 + -rowColNum*2;
+		gameStats.playing = true;
 
         // populate buildings
         for (int x = 0; x < rowColNum; x++) {
@@ -515,7 +522,7 @@ public:
 		M = glm::mat4(1);
 		P = glm::perspective((float)(3.14159 / 4.), (float)((float)width/ (float)height), 0.1f, 1000.0f); //so much type casting... GLM metods are quite funny ones
 
-        V = mycam.process(frametime);
+		V = mycam.process(frametime);
 
 //		/******************************* CITY ******************************/
 //		prog->bind();
@@ -559,6 +566,20 @@ public:
 //        glUniformMatrix4fv(progCityGround->getUniform("M"), 1, GL_FALSE, &M[0][0]);
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
 //        progCityGround->unbind();
+
+
+		if (-mycam.pos.x < gameStats.left) {
+			gameStats.playing = false;
+		}
+		if (-mycam.pos.x > gameStats.right) {
+			gameStats.playing = false;
+		}
+		if (mycam.pos.z - 7 < gameStats.bottom) {
+			cout << "leaving maze on bottom!" << endl;
+		}
+		if (mycam.pos.z - 7 > gameStats.top) {
+			gameStats.playing = false;
+		}
 
         /************************ City Building ********************/
         progCityBuilding->bind();
@@ -610,7 +631,8 @@ int main(int argc, char **argv)
 	/* your main will always include a similar set up to establish your window
 		and GL context, etc. */
 	WindowManager * windowManager = new WindowManager();
-	windowManager->init(1920, 1080);
+	windowManager->init(960, 540);
+//	windowManager->init(1920, 1080);
 	windowManager->setEventCallbacks(application);
 	application->windowManager = windowManager;
 
