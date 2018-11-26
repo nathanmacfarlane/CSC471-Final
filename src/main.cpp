@@ -20,7 +20,6 @@ using namespace glm;
 shared_ptr<Shape> shape, shapeLamp;
 
 #define STB_IMAGE_IMPLEMENTATION
-#define EMPTY vec3(900,900,900)
 #include "stb_image.h"
 
 struct GameStats {
@@ -31,12 +30,13 @@ struct GameStats {
 	bool playing;
 	int size;
 	bool canGoForward;
-	bool canGoBackward;
-	bool canGoLeft;
-	bool canGoRight;
 };
 
-bool shouldMoveCar = true;
+struct Building {
+    vec3 building;
+    bool isVisible;
+};
+
 GameStats gameStats;
 
 
@@ -64,17 +64,17 @@ public:
 		float speed = 0;
 		if (w == 1 && gameStats.canGoForward)
 			speed = -6*ftime;
-		else if (s == 1 && gameStats.canGoBackward)
+		else if (s == 1 && gameStats.canGoForward)
 			speed = 6*ftime;
 
 		float yangle=0;
 
-		if (a == 1)
-			yangle = -1.5*ftime;
-		else if(d==1)
-			yangle = 1.5*ftime;
+		if (a == 1 && gameStats.canGoForward)
+			yangle = -(M_PI/2)*ftime;
+		else if(d==1 && gameStats.canGoForward)
+			yangle = (M_PI/2)*ftime;
 
-        double xangle = 1.5;
+        double xangle = (M_PI/2);
         rot.x = xangle;
         mat4 RX = rotate(mat4(1), rot.x, vec3(1, 0, 0));
 
@@ -99,7 +99,7 @@ public:
 	WindowManager * windowManager = nullptr;
 
 	// Our shader program
-	std::shared_ptr<Program> prog, progLamp, progCityGround, progCityBuilding, progLambo;
+	std::shared_ptr<Program> progLamp, progCityGround, progCityBuilding, progLambo;
 
 	GLuint VAOBox;
 	GLuint VBOBoxPos, VBOBoxColor, VBOBoxIndex;
@@ -107,7 +107,9 @@ public:
 	//texture data
 	GLuint Texture, Texture2;
 
-    vector<vec3> allBuildings;
+    vector<Building> allBuildings;
+    Building exitBuilding;
+    int exitIndex;
 
 	void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 	{
@@ -160,13 +162,13 @@ public:
 	/*Note that any gl calls must always happen after a GL state is initialized */
 	void initGeom()
 	{
-	    prog->bind();
+//	    prog->bind();
 		string resourceDirectory = "../resources" ;
-		shape = make_shared<Shape>();
-		shape->loadMesh(resourceDirectory + "/largeCity.obj");
-		shape->resize();
-		shape->init();
-		prog->unbind();
+//		shape = make_shared<Shape>();
+//		shape->loadMesh(resourceDirectory + "/largeCity.obj");
+//		shape->resize();
+//		shape->init();
+//		prog->unbind();
 
         progLambo->bind();
         shape = make_shared<Shape>();
@@ -311,36 +313,27 @@ public:
 		gameStats.playing = true;
 		gameStats.size = rowColNum;
 		gameStats.canGoForward = true;
-		gameStats.canGoLeft = true;
-		gameStats.canGoRight = true;
-		gameStats.canGoBackward = false;
 
         // populate buildings
         for (int x = 0; x < rowColNum; x++) {
             for (int z = 0; z < rowColNum; z++) {
                 int myRand = rand() % 100 + 1;
                 vec3 buildingPos = vec3(x*2, (float) myRand / 13, 16 + -z*2);
-                allBuildings.push_back(buildingPos);
+                Building temp;
+                temp.building = buildingPos;
+                temp.isVisible = true;
+                allBuildings.push_back(temp);
             }
         }
 
         stack<int> maze;
-        vector<vec3> saved = allBuildings;
+        vector<Building> saved = allBuildings;
         while (maze.size() < rowColNum*3) {
             allBuildings = saved;
             maze = getMaze(rowColNum);
         }
 
 	}
-
-//	void isBuildingAtPos(vec3 pos) {
-//		for (int i = 0; i < allBuildings.size(); i++) {
-//			vec3 temp = vec3(allBuildings[i].x/2, pos.y, (allBuildings[i].z-16)/-2);
-//			if (distance(pos, temp) < 0.1) {
-//				cout << "distance: " << distance(pos, temp) << endl;
-//			}
-//		}
-//	}
 
 	stack<int> getMaze(int size) {
 
@@ -351,18 +344,20 @@ public:
         int currentCell = size*((size/2)-1);
         path.push(currentCell);
         for (int i = 0; i < 4; i++) {
-            allBuildings[currentCell] = vec3(900,900,900);
+            allBuildings[currentCell].isVisible = false;
             currentCell = getUpIndex(size, currentCell);
             path.push(currentCell);
         }
-        allBuildings[currentCell] = vec3(900,900,900);
+        allBuildings[currentCell].isVisible = false;
         path.push(currentCell);
 
         while(getUpIndex(size, currentCell) >= 0 && getLeftIndex(size, currentCell) >= 0 && getRightIndex(size, currentCell) >= 0) {
             int temp = getRandomNeighbor(size, currentCell);
             if (temp > -1 && getNumSurroundingCells(size, temp) > 1 && getDownIndex(size, temp) > -1) {
                 currentCell = temp;
-                allBuildings[currentCell] = vec3(900,900,900);
+                exitBuilding = allBuildings[currentCell];
+                exitIndex = currentCell;
+                allBuildings[currentCell].isVisible = false;
                 path.push(currentCell);
             } else {
                 if (!path.empty()) {
@@ -382,16 +377,16 @@ public:
 		int down = getDownIndex(size, index);
 		int up = getUpIndex(size, index);
 		int count = 0;
-		if (left > -1 && allBuildings[left] != EMPTY) {
+		if (left > -1 && allBuildings[left].isVisible) {
 			count++;
 		}
-		if (right > -1 && allBuildings[right] != EMPTY) {
+		if (right > -1 && allBuildings[right].isVisible) {
 			count++;
 		}
-		if (down > -1 && allBuildings[down] != EMPTY) {
+		if (down > -1 && allBuildings[down].isVisible) {
 			count++;
 		}
-		if (up > -1 && allBuildings[up] != EMPTY) {
+		if (up > -1 && allBuildings[up].isVisible) {
 			count++;
 		}
 		return count;
@@ -447,18 +442,18 @@ public:
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		// Enable z-buffer test.
 		glEnable(GL_DEPTH_TEST);
-
-		// Initialize the GLSL program.
-		prog = std::make_shared<Program>();
-		prog->setVerbose(true);
-		prog->setShaderNames(resourceDirectory + "/shader_vertex.glsl", resourceDirectory + "/shader_fragment.glsl");
-		prog->init();
-		prog->addUniform("P");
-		prog->addUniform("V");
-		prog->addUniform("M");
-		prog->addUniform("campos");
-		prog->addAttribute("vertPos");
-		prog->addAttribute("vertNor");
+//
+//		// Initialize the GLSL program.
+//		prog = std::make_shared<Program>();
+//		prog->setVerbose(true);
+//		prog->setShaderNames(resourceDirectory + "/shader_vertex.glsl", resourceDirectory + "/shader_fragment.glsl");
+//		prog->init();
+//		prog->addUniform("P");
+//		prog->addUniform("V");
+//		prog->addUniform("M");
+//		prog->addUniform("campos");
+//		prog->addAttribute("vertPos");
+//		prog->addAttribute("vertNor");
 
         progLambo = std::make_shared<Program>();
         progLambo->setVerbose(true);
@@ -485,7 +480,7 @@ public:
         progCityGround->addUniform("V");
         progCityGround->addUniform("M");
         progCityGround->addAttribute("vertPos");
-		progCityGround->addAttribute("vertTex");
+//		progCityGround->addAttribute("vertTex");
         progCityGround->addAttribute("vertCol");
 
 
@@ -514,6 +509,7 @@ public:
         progLamp->addUniform("P");
         progLamp->addUniform("V");
         progLamp->addUniform("M");
+        progLamp->addUniform("Color");
         progLamp->addAttribute("vertPos");
 	}
 
@@ -557,20 +553,67 @@ public:
 //		glUniformMatrix4fv(prog->getUniform("M"), 1, GL_FALSE, &M[0][0]);
 //		shape->draw(prog);
 //		prog->unbind();
-//
-//        /******************************* LAMP ******************************/
-//        progLamp->bind();
-//        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
-//        glUniformMatrix4fv(progLamp->getUniform("P"), 1, GL_FALSE, &P[0][0]);
-//        glUniformMatrix4fv(progLamp->getUniform("V"), 1, GL_FALSE, &V[0][0]);
+
+
+        /******************************* LAMP ******************************/
+        progLamp->bind();
+        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
+        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
+        vec3 exitColor = vec3(0.0, 1.0, 0.0);
+        glUniformMatrix4fv(progLamp->getUniform("P"), 1, GL_FALSE, &P[0][0]);
+        glUniformMatrix4fv(progLamp->getUniform("V"), 1, GL_FALSE, &V[0][0]);
 //        glUniform3fv(progLamp->getUniform("lampPos"), 1, &lampPos[0]);
-//        S = scale(mat4(1.0f), vec3(0.2f, 0.2f, 0.2f));
-//        T = translate(mat4(1.0f), lampPos);
-//        R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
-//        M = T * S * R;
-//        glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//        shapeLamp->draw(progLamp);
-//        progLamp->unbind();
+        glUniform3fv(progLamp->getUniform("Color"), 1, &entranceColor[0]);
+        // entrance lamps
+        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
+        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
+        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
+        M = T * S * R;
+        glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        shapeLamp->draw(progLamp, false);
+        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
+        M = T * S * R;
+        glUniform3fv(progLamp->getUniform("Color"), 1, &entranceColor[0]);
+        glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        shapeLamp->draw(progLamp, false);
+        // exit lamps
+        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
+            M = T * S;
+            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progLamp, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
+            M = T * S;
+            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progLamp, false);
+        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
+            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
+            M = T * S * R;
+            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progLamp, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
+            M = T * S * R;
+            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progLamp, false);
+        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
+            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
+            M = T * S * R;
+            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progLamp, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
+            M = T * S * R;
+            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progLamp, false);
+        }
+        progLamp->unbind();
 
 //        /************************ City Ground ********************/
 //        progCityGround->bind();
@@ -586,45 +629,51 @@ public:
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
 //        progCityGround->unbind();
 
+		float rotateBuffer = abs(sin(mycam.rot.y/M_PI))/2;
+		float rotateBufferlr = abs(cos(mycam.rot.y/M_PI))/2;
 
-//		if (-mycam.pos.x < gameStats.left) {
-//			gameStats.playing = false;
-//		} else if (-mycam.pos.x > gameStats.right) {
-//			gameStats.playing = false;
-//		} else if (mycam.pos.z - 7 < gameStats.bottom) {
-//			cout << "leaving maze on bottom!" << endl;
-//		} else if (mycam.pos.z - 7 > gameStats.top) {
-//			gameStats.playing = false;
-//		}
+//		cout << "lr: " << rotateBufferlr << endl;
 
-//		cout << "row: " << row << " col: " << col << endl;
+		int verticalRow = round(-mycam.pos.x + 0.6)/2;
+		int topcol = round(mycam.pos.z + 17 - rotateBuffer)/2;
+		int bottomcol = round(mycam.pos.z + 16.1 + rotateBuffer)/2;
 
-		cout << "camrot.y: " << abs(sin(mycam.rot.y)) << endl;
-		float rotateBuffer = abs(sin(mycam.rot.y))/2;
-		int toprow = round(-mycam.pos.x + 1)/2;
-		int topcol = round(mycam.pos.z + 17.5 - rotateBuffer)/2;
+		int leftrow = round(-mycam.pos.x + 0 - rotateBuffer)/2;
+		int leftcol = round(mycam.pos.z + 17.5 + rotateBuffer)/2;
 
-		int bottomrow = round(-mycam.pos.x + 1)/2;
-		int bottomcol = round(mycam.pos.z + 15.7 - rotateBuffer)/2;
+		int rightrow = round(-mycam.pos.x + 0.7 + rotateBufferlr)/2;
+		int rightcol = round(mycam.pos.z + 17.5)/2;
 
-		if (!(allBuildings[topcol+toprow*20].x > 800 && allBuildings[topcol+toprow*20].y > 800 && allBuildings[topcol+toprow*20].z > 800)) {
-			gameStats.canGoForward = false;
-			gameStats.canGoBackward = true;
-		} else if (!(allBuildings[bottomcol+bottomrow*20].x > 800 && allBuildings[bottomcol+bottomrow*20].y > 800 && allBuildings[bottomcol+bottomrow*20].z > 800)) {
-			shouldMoveCar = false;
-			gameStats.canGoForward = true;
-			gameStats.canGoBackward = false;
-		} else {
-			gameStats.canGoForward = true;
-			gameStats.canGoBackward = true;
+		bool isStuck = false;
+
+		if (allBuildings[topcol+verticalRow*20].isVisible) {
+//			isStuck = true;
 		}
+
+		if (allBuildings[bottomcol+verticalRow*20].isVisible) {
+//			isStuck = true;
+		}
+
+		if (allBuildings[rightcol+rightrow*20].isVisible) {
+		    cout << "stuck on right" << endl;
+//            isStuck = true;
+		}
+
+		if (allBuildings[leftcol+leftrow*20].isVisible) {
+            cout << "stuck on left" << endl;
+//            isStuck = true;
+		}
+
+//		cout << "left row: " << leftrow << " leftcol: " << leftcol << endl;
+
+		gameStats.canGoForward = !isStuck;
 
 		/************************ Lambo ********************/
 		progLambo->bind();
 		glUniformMatrix4fv(progLambo->getUniform("P"), 1, GL_FALSE, &P[0][0]);
 		glUniformMatrix4fv(progLambo->getUniform("V"), 1, GL_FALSE, &V[0][0]);
 		glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-		S = scale(mat4(1.0f), vec3(2, 2, 2));
+		S = scale(mat4(1.0f), vec3(1, 1, 1));
 		T = translate(mat4(1.0f), vec3(0, -40, 0) - mycam.pos);
 		R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
 		R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
@@ -643,8 +692,11 @@ public:
         glBindVertexArray(VAOBox);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
         for (int i = 0; i < allBuildings.size(); i++) {
-            S = scale(mat4(1.0f), vec3(1.0f, 2+allBuildings[i].y, 1.0f));
-            T = translate(mat4(1.0f), allBuildings[i]);
+            if (!allBuildings[i].isVisible) {
+                continue;
+            }
+            S = scale(mat4(1.0f), vec3(1.0f, 2+allBuildings[i].building.y, 1.0f));
+            T = translate(mat4(1.0f), allBuildings[i].building);
             M = T * S;
             glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
