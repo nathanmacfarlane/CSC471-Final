@@ -14,13 +14,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="342d2bae-b3f9-4b3b-8235-519c57c04dbf" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/CXX.includecache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/depend.internal" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/depend.make" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/main.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/main.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Final" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Final" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Shape.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Shape.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -77,11 +70,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="678" column="125" selection-start-line="678" selection-start-column="125" selection-end-line="678" selection-end-column="125" />
+            <state relative-caret-position="870">
+              <caret line="692" column="9" selection-start-line="692" selection-start-column="9" selection-end-line="692" selection-end-column="9" />
               <folding>
                 <element signature="e#39#58#0" expanded="true" />
                 <element signature="e#238#269#0" expanded="true" />
@@ -90,10 +83,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Shape.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="415">
+            <state relative-caret-position="482">
               <caret line="239" column="40" selection-start-line="239" selection-start-column="40" selection-end-line="239" selection-end-column="40" />
             </state>
           </provider>
@@ -177,8 +170,8 @@
         <option value="$PROJECT_DIR$/resources/shader_fragment.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_fragment_lamp.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_vertex_lamp.glsl" />
-        <option value="$PROJECT_DIR$/src/main.cpp" />
         <option value="$PROJECT_DIR$/src/Shape.cpp" />
+        <option value="$PROJECT_DIR$/src/main.cpp" />
       </list>
     </option>
   </component>
@@ -301,12 +294,12 @@
       <workItem from="1543028957164" duration="11000" />
       <workItem from="1543030183402" duration="623000" />
       <workItem from="1543257722886" duration="6626000" />
-      <workItem from="1543338699837" duration="15503000" />
+      <workItem from="1543338699837" duration="15617000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="110594000" />
+    <option name="totallyTimeSpent" value="110708000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -486,21 +479,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Shape.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="482">
+          <caret line="239" column="40" selection-start-line="239" selection-start-column="40" selection-end-line="239" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="678" column="125" selection-start-line="678" selection-start-column="125" selection-end-line="678" selection-end-column="125" />
+        <state relative-caret-position="870">
+          <caret line="692" column="9" selection-start-line="692" selection-start-column="9" selection-end-line="692" selection-end-column="9" />
           <folding>
             <element signature="e#39#58#0" expanded="true" />
             <element signature="e#238#269#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Shape.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="415">
-          <caret line="239" column="40" selection-start-line="239" selection-start-column="40" selection-end-line="239" selection-end-column="40" />
         </state>
       </provider>
     </entry>

@@ -692,35 +692,6 @@ public:
 		    oldCamRot = mycam.rot;
 		}
 
-//		// TOP LEFT
-//		mat4 topLeft = translate(M, vec3(0.1, 0.0, 0.4));
-//		int tlX = round(topLeft[3][0]/2);
-//		int tlY = 19 - (round(topLeft[3][2]/2) + 11);
-//        if (allBuildings[tlY + tlX*20].isVisible) {
-//            cout << "stuck on top left" << endl;
-//        }
-//        // TOP RIGHT
-//        mat4 topRight = translate(M, vec3(-0.1, 0.0, 0.4));
-//        int trX = round(topRight[3][0]/2);
-//        int trY = 19 - (round(topRight[3][2]/2) + 11);
-//        if (allBuildings[trY + trX*20].isVisible) {
-//            cout << "stuck on top right" << endl;
-//        }
-//        // BOTTOM LEFT
-//        mat4 bottomLeft = translate(M, vec3(0.1, 0.0, -0.4));
-//        int blX = round(bottomLeft[3][0]/2);
-//        int blY = 19 - (round(bottomLeft[3][2]/2) + 11);
-//        if (allBuildings[blY + blX*20].isVisible) {
-//            cout << "stuck on bottom left" << endl;
-//        }
-//        // BOTTOM RIGHT
-//        mat4 bottomRight = translate(M, vec3(-0.1, 0.0, -0.4));
-//        int brX = round(bottomRight[3][0]/2);
-//        int brY = 19 - (round(bottomRight[3][2]/2) + 11);
-//        if (allBuildings[brY + brX*20].isVisible) {
-//            cout << "stuck on bottom right" << endl;
-//        }
-
 		glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
 		glUniform3fv(progLambo->getUniform("campos"), 1, &mycam.pos[0]);
 		shape->draw(progLambo, false);
