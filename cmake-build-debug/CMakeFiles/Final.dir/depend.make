@@ -216,8 +216,16 @@ CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/quaternion.hpp
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/quaternion.inl
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/quaternion_simd.inl
+CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/type_precision.hpp
+CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/type_precision.inl
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/type_ptr.hpp
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/type_ptr.inl
+CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/vec1.hpp
+CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/vec1.inl
+CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtx/dual_quaternion.hpp
+CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtx/dual_quaternion.inl
+CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtx/string_cast.hpp
+CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtx/string_cast.inl
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/integer.hpp
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/mat2x2.hpp
 CMakeFiles/Final.dir/src/main.cpp.o: /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/mat2x3.hpp

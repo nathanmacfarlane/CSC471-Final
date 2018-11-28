@@ -9,6 +9,7 @@ ZJ Wood CPE 471 Lab 3 base code
 #include "GLSL.h"
 #include "Program.h"
 #include "MatrixStack.h"
+#include <glm/gtx/string_cast.hpp>
 
 #include "WindowManager.h"
 #include "Shape.h"
@@ -29,7 +30,10 @@ struct GameStats {
 	int right;
 	bool playing;
 	int size;
-	bool canGoForward;
+	int starting;
+	int ending;
+	bool stuck;
+	double carSpeed;
 };
 
 struct Building {
@@ -59,19 +63,39 @@ public:
 		rot = glm::vec3(0, 0, 0);
         pos = glm::vec3(-18, -14, -17);
 	}
+	void incrementSpeed() {
+        if (gameStats.carSpeed < 2.0) {
+            gameStats.carSpeed += 0.01;
+        }
+	}
+    void decrementSpeed() {
+        if (gameStats.carSpeed > -2.0) {
+            gameStats.carSpeed -= 0.01;
+        }
+    }
 	glm::mat4 process(double ftime)
 	{
 		float speed = 0;
-		if (w == 1 && gameStats.canGoForward)
-			speed = -6*ftime;
-		else if (s == 1 && gameStats.canGoForward)
-			speed = 6*ftime;
+        if (w == 1) {
+            incrementSpeed();
+        } else if (s == 1) {
+            decrementSpeed();
+        } else {
+            // bring to zero
+            if (gameStats.carSpeed < 0) {
+                gameStats.carSpeed += 0.005;
+            } else if (gameStats.carSpeed > 0) {
+                gameStats.carSpeed -= 0.005;
+            }
+        }
+
+        speed = -3 * ftime * gameStats.carSpeed;
 
 		float yangle=0;
 
-		if (a == 1 && gameStats.canGoForward)
+		if (a == 1)
 			yangle = -(M_PI/2)*ftime;
-		else if(d==1 && gameStats.canGoForward)
+		else if(d==1)
 			yangle = (M_PI/2)*ftime;
 
         double xangle = (M_PI/2);
@@ -312,7 +336,9 @@ public:
 		gameStats.bottom = 16 + -rowColNum*2;
 		gameStats.playing = true;
 		gameStats.size = rowColNum;
-		gameStats.canGoForward = true;
+		gameStats.starting = rowColNum*((rowColNum/2)-1);
+		gameStats.stuck = false;
+		gameStats.carSpeed = 0.0;
 
         // populate buildings
         for (int x = 0; x < rowColNum; x++) {
@@ -332,6 +358,7 @@ public:
             allBuildings = saved;
             maze = getMaze(rowColNum);
         }
+        gameStats.ending = maze.top();
 
 	}
 
@@ -519,6 +546,8 @@ public:
 	will actually issue the commands to draw any geometry you have set up to
 	draw
 	********/
+	mat4 oldM;
+	vec3 oldCamPos, oldCamRot;
 	void render()
 	{
 		double frametime = get_last_elapsed_time();
@@ -540,6 +569,7 @@ public:
 		P = glm::perspective((float)(3.14159 / 4.), (float)((float)width/ (float)height), 0.1f, 1000.0f); //so much type casting... GLM metods are quite funny ones
 
 		V = mycam.process(frametime);
+
 //		/******************************* CITY ******************************/
 //		prog->bind();
 //        vec3 temp = vec3(-mycam.pos.x, -mycam.pos.y, -mycam.pos.z);
@@ -629,56 +659,68 @@ public:
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
 //        progCityGround->unbind();
 
-		float rotateBuffer = abs(sin(mycam.rot.y/M_PI))/2;
-		float rotateBufferlr = abs(cos(mycam.rot.y/M_PI))/2;
-
-//		cout << "lr: " << rotateBufferlr << endl;
-
-		int verticalRow = round(-mycam.pos.x + 0.6)/2;
-		int topcol = round(mycam.pos.z + 17 - rotateBuffer)/2;
-		int bottomcol = round(mycam.pos.z + 16.1 + rotateBuffer)/2;
-
-		int leftrow = round(-mycam.pos.x + 0 - rotateBuffer)/2;
-		int leftcol = round(mycam.pos.z + 17.5 + rotateBuffer)/2;
-
-		int rightrow = round(-mycam.pos.x + 0.7 + rotateBufferlr)/2;
-		int rightcol = round(mycam.pos.z + 17.5)/2;
-
-		bool isStuck = false;
-
-		if (allBuildings[topcol+verticalRow*20].isVisible) {
-//			isStuck = true;
-		}
-
-		if (allBuildings[bottomcol+verticalRow*20].isVisible) {
-//			isStuck = true;
-		}
-
-		if (allBuildings[rightcol+rightrow*20].isVisible) {
-		    cout << "stuck on right" << endl;
-//            isStuck = true;
-		}
-
-		if (allBuildings[leftcol+leftrow*20].isVisible) {
-            cout << "stuck on left" << endl;
-//            isStuck = true;
-		}
-
-//		cout << "left row: " << leftrow << " leftcol: " << leftcol << endl;
-
-		gameStats.canGoForward = !isStuck;
-
 		/************************ Lambo ********************/
 		progLambo->bind();
 		glUniformMatrix4fv(progLambo->getUniform("P"), 1, GL_FALSE, &P[0][0]);
 		glUniformMatrix4fv(progLambo->getUniform("V"), 1, GL_FALSE, &V[0][0]);
 		glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-		S = scale(mat4(1.0f), vec3(1, 1, 1));
-		T = translate(mat4(1.0f), vec3(0, -40, 0) - mycam.pos);
+		T = translate(mat4(1.0f), vec3(0, -40, 0.0) - mycam.pos);
 		R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
 		R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
-		M = T * S * R2 * R;
-		mat4 test = M;
+		mat4 temp = T * R2 * R;
+
+		vec3 offsets[4] = {vec3(0.1, 0.0, 0.4), vec3(-0.1, 0.0, 0.4), vec3(0.1, 0.0, -0.4), vec3(-0.1, 0.0, -0.4)};
+
+		gameStats.stuck = false;
+		for (int i = 0; i < 4; i++) {
+		    mat4 offset = translate(temp, offsets[i]);
+            int x = round(offset[3][0]/2);
+            int y = 19 - (round(offset[3][2]/2) + 11);
+            if (allBuildings[y + x*20].isVisible && (y + x*20+1) != gameStats.starting && (y + x*20-1) != gameStats.ending) {
+                gameStats.stuck = true;
+                gameStats.carSpeed = 0;
+            }
+		}
+        if (gameStats.stuck) {
+		    M = oldM;
+		    mycam.pos = oldCamPos;
+		    mycam.rot = oldCamRot;
+		} else {
+		    M = temp;
+		    oldM = temp;
+		    oldCamPos = mycam.pos;
+		    oldCamRot = mycam.rot;
+		}
+
+//		// TOP LEFT
+//		mat4 topLeft = translate(M, vec3(0.1, 0.0, 0.4));
+//		int tlX = round(topLeft[3][0]/2);
+//		int tlY = 19 - (round(topLeft[3][2]/2) + 11);
+//        if (allBuildings[tlY + tlX*20].isVisible) {
+//            cout << "stuck on top left" << endl;
+//        }
+//        // TOP RIGHT
+//        mat4 topRight = translate(M, vec3(-0.1, 0.0, 0.4));
+//        int trX = round(topRight[3][0]/2);
+//        int trY = 19 - (round(topRight[3][2]/2) + 11);
+//        if (allBuildings[trY + trX*20].isVisible) {
+//            cout << "stuck on top right" << endl;
+//        }
+//        // BOTTOM LEFT
+//        mat4 bottomLeft = translate(M, vec3(0.1, 0.0, -0.4));
+//        int blX = round(bottomLeft[3][0]/2);
+//        int blY = 19 - (round(bottomLeft[3][2]/2) + 11);
+//        if (allBuildings[blY + blX*20].isVisible) {
+//            cout << "stuck on bottom left" << endl;
+//        }
+//        // BOTTOM RIGHT
+//        mat4 bottomRight = translate(M, vec3(-0.1, 0.0, -0.4));
+//        int brX = round(bottomRight[3][0]/2);
+//        int brY = 19 - (round(bottomRight[3][2]/2) + 11);
+//        if (allBuildings[brY + brX*20].isVisible) {
+//            cout << "stuck on bottom right" << endl;
+//        }
+
 		glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
 		glUniform3fv(progLambo->getUniform("campos"), 1, &mycam.pos[0]);
 		shape->draw(progLambo, false);

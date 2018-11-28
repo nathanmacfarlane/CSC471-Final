@@ -217,8 +217,16 @@ CMakeFiles/Final.dir/src/main.cpp.o
  /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/quaternion.hpp
  /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/quaternion.inl
  /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/quaternion_simd.inl
+ /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/type_precision.hpp
+ /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/type_precision.inl
  /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/type_ptr.hpp
  /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/type_ptr.inl
+ /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/vec1.hpp
+ /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtc/vec1.inl
+ /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtx/dual_quaternion.hpp
+ /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtx/dual_quaternion.inl
+ /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtx/string_cast.hpp
+ /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/gtx/string_cast.inl
  /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/integer.hpp
  /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/mat2x2.hpp
  /Users/nathanmacfarlane/School/CSC471/lab5/OpenGL_MAC/glm-0.9.8.3/glm/mat2x3.hpp
