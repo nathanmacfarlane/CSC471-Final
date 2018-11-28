@@ -13,9 +13,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="342d2bae-b3f9-4b3b-8235-519c57c04dbf" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
-    </list>
+    <list default="true" id="342d2bae-b3f9-4b3b-8235-519c57c04dbf" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -73,7 +71,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="870">
+            <state relative-caret-position="335">
               <caret line="692" column="9" selection-start-line="692" selection-start-column="9" selection-end-line="692" selection-end-column="9" />
               <folding>
                 <element signature="e#39#58#0" expanded="true" />
@@ -294,12 +292,12 @@
       <workItem from="1543028957164" duration="11000" />
       <workItem from="1543030183402" duration="623000" />
       <workItem from="1543257722886" duration="6626000" />
-      <workItem from="1543338699837" duration="15617000" />
+      <workItem from="1543338699837" duration="17061000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="110708000" />
+    <option name="totallyTimeSpent" value="112152000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -488,7 +486,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="870">
+        <state relative-caret-position="335">
           <caret line="692" column="9" selection-start-line="692" selection-start-column="9" selection-end-line="692" selection-end-column="9" />
           <folding>
             <element signature="e#39#58#0" expanded="true" />
