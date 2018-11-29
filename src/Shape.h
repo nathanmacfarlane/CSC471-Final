@@ -26,6 +26,7 @@ public:
 	void init();
 	void resize();
 	void draw(const std::shared_ptr<Program> prog, bool use_extern_texures) const;
+	void drawBasic(const std::shared_ptr<Program> prog) const;
 	unsigned int *textureIDs = NULL;
 	std::vector<float> *posBuf = NULL;
 

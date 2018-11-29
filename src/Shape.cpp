@@ -276,3 +276,25 @@ void Shape::draw(const shared_ptr<Program> prog,bool use_extern_texures) const
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 }
+void Shape::drawBasic(const shared_ptr<Program> prog) const
+{
+	int h_pos;
+	h_pos = -1;
+
+	glBindVertexArray(vaoID[0]);
+	// Bind position buffer
+	h_pos = prog->getAttribute("vertPos");
+	GLSL::enableVertexAttribArray(h_pos);
+	glBindBuffer(GL_ARRAY_BUFFER, posBufID[0]);
+	glVertexAttribPointer(h_pos, 3, GL_FLOAT, GL_FALSE, 0, (const void *)0);
+
+	// Bind element buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eleBufID[0]);
+
+	// Draw
+	glDrawElements(GL_TRIANGLES, (int)eleBuf[0].size(), GL_UNSIGNED_INT, (const void *)0);
+
+	GLSL::disableVertexAttribArray(h_pos);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
