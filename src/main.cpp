@@ -14,7 +14,6 @@ ZJ Wood CPE 471 Lab 3 base code
 
 #include "WindowManager.h"
 #include "Shape.h"
-// value_ptr for glm
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace std;
@@ -34,9 +33,10 @@ struct GameStats {
 	int ending;
 	bool stuck;
 	double carSpeed;
+	float isBraking = false;
 };
 #define M_PI 3.1415926
-#define SHADOW_DIM 4096
+#define SHADOW_DIM 1024
 
 struct Light
 {
@@ -52,12 +52,11 @@ struct Building {
 
 shared_ptr<Shape> shape, shapeLamp;
 GameStats gameStats;
-mat4 oldM;
+mat4 oldM, globalCam = mat4(1.0f);
 vec3 oldCamPos, oldCamRot;
 Light primaryLight;
 bool show_shadowmap = false;
-const vec3 earth_pos = glm::vec3(0, 0, -5);
-
+mat4 lightSpace = mat4(1.0f);
 
 double get_last_elapsed_time()
 {
@@ -75,17 +74,17 @@ public:
 	camera()
 	{
 		w = a = s = d = 0;
-		rot = glm::vec3(0, 0, 0);
-        pos = glm::vec3(-18, -14, -17);
+		rot = vec3(0, 0, 0);
+        pos = vec3(-18, -14, -17);
 	}
 	void incrementSpeed() {
-        if (gameStats.carSpeed < 2.0) {
-            gameStats.carSpeed += 0.01;
+        if (gameStats.carSpeed < 3.0) {
+            gameStats.carSpeed += 0.07;
         }
 	}
     void decrementSpeed() {
         if (gameStats.carSpeed > -2.0) {
-            gameStats.carSpeed -= 0.01;
+            gameStats.carSpeed -= 0.07;
         }
     }
 	glm::mat4 process(double ftime)
@@ -93,15 +92,18 @@ public:
 		float speed = 0;
         if (w == 1) {
             incrementSpeed();
+            gameStats.isBraking = 0.0;
         } else if (s == 1) {
             decrementSpeed();
+            gameStats.isBraking = 1.0;
         } else {
             // bring to zero
             if (gameStats.carSpeed < 0) {
-                gameStats.carSpeed += 0.005;
+                gameStats.carSpeed += 0.01;
             } else if (gameStats.carSpeed > 0) {
-                gameStats.carSpeed -= 0.005;
+                gameStats.carSpeed -= 0.01;
             }
+            gameStats.isBraking = 0.0;
         }
 
         speed = -3 * ftime * gameStats.carSpeed;
@@ -109,9 +111,9 @@ public:
 		float yangle=0;
 
 		if (a == 1)
-			yangle = -(M_PI/2)*ftime;
+			yangle = -(M_PI/2)*ftime * 1.5;
 		else if(d==1)
-			yangle = (M_PI/2)*ftime;
+			yangle = (M_PI/2)*ftime * 1.5;
 
         double xangle = (M_PI/2);
         rot.x = xangle;
@@ -119,17 +121,16 @@ public:
 
 
 		rot.y += yangle;
-		glm::mat4 R = glm::rotate(glm::mat4(1), rot.y, glm::vec3(0, 0, 1));
-		glm::vec4 dir = glm::vec4(0, speed, 0,1);
+		mat4 R = rotate(mat4(1), rot.y, vec3(0, 0, 1));
+		vec4 dir = vec4(0, speed, 0,1);
 		dir = dir * R * RX;
-		pos += glm::vec3(dir.x, dir.y, dir.z);
-		glm::mat4 T = glm::translate(glm::mat4(1), pos);
+		pos += vec3(dir.x, dir.y, dir.z);
+		mat4 T = translate(mat4(1), pos);
 		return R * RX * T;
 	}
 };
 
 camera mycam;
-
 class Application : public EventCallbacks
 {
 
@@ -145,10 +146,9 @@ public:
 	GLuint VBOBoxPos, VBOBoxColor, VBOBoxIndex;
 	GLuint FBOtex, fb, depth_rb, fb_shadowMap, FBOtex_shadowMapDepth;
 	GLuint VertexBufferIDBox, VertexArrayIDBox, VertexBufferIDNorm, VertexBufferTex;
-	mat4 M_Lamp;
 
 	//texture data
-	GLuint Texture, Texture2;
+	GLuint Texture, mask,Texture2, citytex;
 
     vector<Building> allBuildings;
     Building exitBuilding;
@@ -257,10 +257,10 @@ public:
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
-//        glEnable(GL_CULL_FACE);
-//        glFrontFace(GL_CCW);
-//        glEnable(GL_BLEND);
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CCW);
+       // glEnable(GL_BLEND);
+       // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         prog2 = make_shared<Program>();
         prog2->setVerbose(true);
@@ -284,10 +284,26 @@ public:
         progLambo->addUniform("P");
         progLambo->addUniform("V");
         progLambo->addUniform("M");
+        progLambo->addUniform("isBraking");
         progLambo->addUniform("campos");
         progLambo->addAttribute("vertPos");
         progLambo->addAttribute("vertTex");
         progLambo->addAttribute("vertNor");
+
+
+        progLamp = std::make_shared<Program>();
+        progLamp->setVerbose(true);
+        progLamp->setShaderNames(resourceDirectory + "/shader_vertex_lamp.glsl", resourceDirectory + "/shader_fragment_lamp.glsl");
+        progLamp->init();
+        progLamp->addUniform("P");
+        progLamp->addUniform("V");
+        progLamp->addUniform("M");
+        progLamp->addUniform("Color");
+        progLamp->addAttribute("vertPos");
+        progLamp->addUniform("lightSpace");
+        progLamp->addUniform("campos");
+        progLamp->addUniform("lightpos");
+        progLamp->addUniform("lightdir");
 
 
         progCityGround = std::make_shared<Program>();
@@ -308,7 +324,7 @@ public:
 
         progCityBuilding = std::make_shared<Program>();
         progCityBuilding->setVerbose(true);
-        progCityBuilding->setShaderNames(resourceDirectory + "/shader_vertex_cube.glsl", resourceDirectory + "/shader_fragment_cube.glsl");
+        progCityBuilding->setShaderNames(resourceDirectory + "/shader_vertex.glsl", resourceDirectory + "/shader_fragment.glsl");
         if (!progCityBuilding->init())
         {
             std::cerr << "One or more shaders failed to compile... exiting!" << std::endl;
@@ -317,25 +333,10 @@ public:
         progCityBuilding->addUniform("P");
         progCityBuilding->addUniform("V");
         progCityBuilding->addUniform("M");
+        progCityBuilding->addUniform("lightSpace");
         progCityBuilding->addAttribute("vertPos");
         progCityBuilding->addAttribute("vertCol");
-
-
-
-
-        progLamp = std::make_shared<Program>();
-        progLamp->setVerbose(true);
-        progLamp->setShaderNames(resourceDirectory + "/shader_vertex_lamp.glsl", resourceDirectory + "/shader_fragment_lamp.glsl");
-        progLamp->init();
-        progLamp->addUniform("P");
-        progLamp->addUniform("V");
-        progLamp->addUniform("M");
-        progLamp->addUniform("Color");
-        progLamp->addAttribute("vertPos");
-        progLamp->addUniform("lightSpace");
-        progLamp->addUniform("campos");
-        progLamp->addUniform("lightpos");
-        progLamp->addUniform("lightdir");
+		progCityBuilding->addAttribute("vertTex");
 
 
 		// Initialize the Shadow Map shader program.
@@ -361,7 +362,7 @@ public:
 
         // Initialize light structures.
         primaryLight.position = vec3(10.0f, 0.0f, 10.0f);
-        primaryLight.direction = normalize(earth_pos - primaryLight.position);
+//        primaryLight.direction = normalize(earth_pos - primaryLight.position);
         primaryLight.color = vec3(1.0f, 1.0f, 1.0f);
 
         //init rectangle mesh (2 triangles) for the post processing
@@ -373,12 +374,12 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, VertexBufferIDBox);
         GLfloat *rectangle_positions = new GLfloat[18];
         int verccount = 0;
-        rectangle_positions[verccount++] = 0.0, rectangle_positions[verccount++] = 0.0, rectangle_positions[verccount++] = 0.0;
-        rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = 0.0, rectangle_positions[verccount++] = 0.0;
-        rectangle_positions[verccount++] = 0.0, rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = 0.0;
-        rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = 0.0, rectangle_positions[verccount++] = 0.0;
+        rectangle_positions[verccount++] = -1.0, rectangle_positions[verccount++] = -1.0, rectangle_positions[verccount++] = 0.0;
+        rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = -1.0, rectangle_positions[verccount++] = 0.0;
+        rectangle_positions[verccount++] = -1.0, rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = 0.0;
+        rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = -1.0, rectangle_positions[verccount++] = 0.0;
         rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = 0.0;
-        rectangle_positions[verccount++] = 0.0, rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = 0.0;
+        rectangle_positions[verccount++] = -1.0, rectangle_positions[verccount++] = 1.0, rectangle_positions[verccount++] = 0.0;
         glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), rectangle_positions, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -435,6 +436,33 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
+
+		//texture 1
+		str = resourceDirectory + "/headmask.jpg";
+		strcpy(filepath, str.c_str());
+		data = stbi_load(filepath, &width, &height, &channels, 4);
+		glGenTextures(1, &mask);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mask);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		//texture 1
+		str = resourceDirectory + "/citytex.jpg";
+		strcpy(filepath, str.c_str());
+		data = stbi_load(filepath, &width, &height, &channels, 4);
+		glGenTextures(1, &citytex);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, citytex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
         //texture 2
         str = resourceDirectory + "/lambo_spec.jpg";
         strcpy(filepath, str.c_str());
@@ -456,7 +484,13 @@ public:
         glUniform1i(Tex1Location, 0);
         glUniform1i(Tex2Location, 1);
 
-
+        Tex1Location = glGetUniformLocation(progCityBuilding->pid, "shadowMapTex");
+        glUseProgram(progCityBuilding->pid);
+        glUniform1i(Tex1Location, 2);
+		GLuint texloc = glGetUniformLocation(progCityBuilding->pid, "tex");
+		glUniform1i(texloc, 0);
+		GLuint texloc3 = glGetUniformLocation(progCityBuilding->pid, "mask");
+		glUniform1i(texloc3, 1);
 		// cube
         glGenVertexArrays(1, &VAOBox);
         glBindVertexArray(VAOBox);
@@ -494,6 +528,25 @@ public:
         glBufferData(GL_ARRAY_BUFFER, sizeof(cube_colors), cube_colors, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
+		//tex:
+		glGenBuffers(1, &VBOBoxColor);
+		glBindBuffer(GL_ARRAY_BUFFER, VBOBoxColor);
+		GLfloat cube_tex[] = {
+			// front
+			0.0, 1.0,
+			1.0, 1.0,
+			1.0, 0.0, 
+			0.0, 0.0, 
+			// back
+			1.0, 1.0,
+			0.0, 1.0,
+			0.0, 0.0,
+			1.0, 0.0,
+		};
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_tex), cube_tex, GL_DYNAMIC_DRAW);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		//
         glGenBuffers(1, &VBOBoxIndex);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
         GLushort cube_elements[] = {
@@ -595,6 +648,12 @@ public:
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 
+
+        glUseProgram(shadowProg->pid);
+        GLuint ShadowTexLocation = glGetUniformLocation(shadowProg->pid, "shadowMapTex");
+        glUniform1i(ShadowTexLocation, 0);
+		
+
         //RGBA8 2D texture, 24 bit depth texture, 256x256
         glGenTextures(1, &FBOtex);
         init_screen_texture_fbo();
@@ -650,13 +709,18 @@ public:
         const float zNear = 0.1f;
         const float zFar = 50.0f;
 
-        lightP = glm::ortho(left, right, bottom, top, zNear, zFar);
+        lightP = perspective((float)(3.14159 / 4.), (float)((float)960/ (float)540), 0.1f, 20.0f);
     }
 
     void get_light_view_matrix(glm::mat4& lightV)
     {
+	//	glm::mat4 R = glm::rotate(glm::mat4(1), mycam.rot.y, glm::vec3(0, 1, 0));
         // Change earth_pos (or primaryLight.direction) to change where the light is pointing at.
-        lightV = glm::lookAt(mycam.pos + vec3(1,0,1), mycam.pos + vec3(0,-1,0), glm::vec3(0.0f, 0.0f, 1.0f));
+       // lightV = glm::lookAt(mycam.pos + vec3(0, 0, 0), mycam.pos + vec3(0,0,-1), glm::vec3(0.0f, 1.0f, 0.0f))*R;
+
+		glm::mat4 R = glm::rotate(glm::mat4(1), mycam.rot.y, glm::vec3(0, 1, 0));
+		glm::mat4 T = glm::translate(glm::mat4(1), mycam.pos + vec3(0,13.95,0));
+		lightV = R  * T;
     }
 
     void render_to_texture()
@@ -672,10 +736,7 @@ public:
         float aspect = width/(float)height;
         glViewport(0, 0, width, height);
 
-        mat4 lightP, lightV, lightSpace;
-        get_light_proj_matrix(lightP);
-        get_light_view_matrix(lightV);
-        lightSpace = lightP * lightV;
+      
 
         // Clear framebuffer.
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -685,9 +746,10 @@ public:
         glm::mat4 V, M, P, S, T, R, T1, R2, R3, T2, T3, R4;
         V = glm::mat4(1);
         M = glm::mat4(1);
-        P = glm::perspective((float)(3.14159 / 4.), (float)((float)width/ (float)height), 0.1f, 1000.0f); //so much type casting... GLM metods are quite funny ones
+        P = glm::perspective((float)(3.14159 / 4.), (float)((float)width/ (float)height), 0.1f, 20.0f); //so much type casting... GLM metods are quite funny ones
 
         V = mycam.process(frametime);
+        globalCam = V;
 
         /******************************* LAMP ******************************/
         progLamp->bind();
@@ -752,7 +814,6 @@ public:
             glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
             shapeLamp->draw(progLamp, false);
         }
-        M_Lamp = M;
         progLamp->unbind();
 
 //        /************************ City Ground ********************/
@@ -763,7 +824,7 @@ public:
 //        glBindVertexArray(VAOBox);
 //        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
 //        S = scale(mat4(1.0f), vec3(20.0f, 20.0f, 20.0f));
-//        T = translate(mat4(1.0f), vec3(0.0, -22.0, 0.0));
+//        T = translate(mat4(1.0f), vec3(0.0, -20.0, 0.0));
 //        M = T * S;
 //        glUniformMatrix4fv(progCityGround->getUniform("M"), 1, GL_FALSE, &M[0][0]);
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
@@ -774,10 +835,11 @@ public:
         glUniformMatrix4fv(progLambo->getUniform("P"), 1, GL_FALSE, &P[0][0]);
         glUniformMatrix4fv(progLambo->getUniform("V"), 1, GL_FALSE, &V[0][0]);
         glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        T = translate(mat4(1.0f), vec3(0, -40, 0.0) - mycam.pos);
+        S = scale(mat4(1.0f), vec3(0.6f, 0.6f, 0.6f));
+        T = translate(mat4(1.0f), vec3(0, -20, 0.0) - mycam.pos);
         R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
         R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
-        mat4 temp = T * R2 * R;
+        mat4 temp = T * R2 * R * S;
 
         vec3 offsets[4] = {vec3(0.1, 0.0, 0.4), vec3(-0.1, 0.0, 0.4), vec3(0.1, 0.0, -0.4), vec3(-0.1, 0.0, -0.4)};
 
@@ -801,7 +863,7 @@ public:
             oldCamPos = mycam.pos;
             oldCamRot = mycam.rot;
         }
-
+        glUniform1f(progLambo->getUniform("isBraking"), gameStats.isBraking);
         glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
         glUniform3fv(progLambo->getUniform("campos"), 1, &mycam.pos[0]);
         shape->draw(progLambo, false);
@@ -814,6 +876,15 @@ public:
         glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
         glBindVertexArray(VAOBox);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
+      
+		glUniformMatrix4fv(progCityBuilding->getUniform("lightSpace"), 1, GL_FALSE, &lightSpace[0][0]);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, citytex);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mask);
+		glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
         for (int i = 0; i < allBuildings.size(); i++) {
             if (!allBuildings[i].isVisible) {
                 continue;
@@ -850,21 +921,148 @@ public:
 
         // "Camera" for rendering shadow map is at light source, looking at the scene.
         get_light_view_matrix(V);
+        T = translate(mat4(1.0f), vec3(0,0,0));
+
+		mat4 TV = translate(mat4(1.0f), vec3(1.2, 0, -1.2));
+		mat4 VR = rotate(mat4(1.0f), (float) -3.14 / 2, vec3(1.0f, 0.0f, 0.0f));
 
         // Bind shadow map shader program and matrix uniforms.
         shadowProg->bind();
         glUniformMatrix4fv(shadowProg->getUniform("P"), 1, GL_FALSE, &P[0][0]);
         glUniformMatrix4fv(shadowProg->getUniform("V"), 1, GL_FALSE, &V[0][0]);
 
-        // set matrices
-        //	******		lamp		******
-        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M_Lamp[0][0]);
-        shape->drawBasic(shadowProg);	//draw lamp
 
-		//render everthing
-		//correct M
-		//dont need textures, other shaders,
 
+
+        double frametime = get_last_elapsed_time();
+        // Get current frame buffer size.
+        int width, height;
+       
+
+        mat4 lightP, lightV;
+        get_light_proj_matrix(lightP);
+        get_light_view_matrix(lightV);
+        lightSpace = P * V;
+
+        // Clear framebuffer.
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Create the matrix stacks - please leave these alone for now
+
+        glm::mat4 R, T1, R2, R3, T2, T3, R4;
+        M = glm::mat4(1);
+
+        /******************************* LAMP ******************************/
+        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
+        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
+        vec3 exitColor = vec3(0.0, 1.0, 0.0);
+        glUniformMatrix4fv(shadowProg->getUniform("P"), 1, GL_FALSE, &P[0][0]);
+        glUniformMatrix4fv(shadowProg->getUniform("V"), 1, GL_FALSE, &V[0][0]);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
+        // entrance lamps
+        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
+        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
+        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
+        M = T * S * R;
+        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        shapeLamp->draw(shadowProg, false);
+        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
+        M = T * S * R;
+        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        shapeLamp->draw(shadowProg, false);
+        // exit lamps
+        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
+            M = T * S;
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
+            M = T * S;
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
+            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
+            M = T * S * R;
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
+            M = T * S * R;
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
+            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
+            M = T * S * R;
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
+            M = T * S * R;
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+        }
+
+        /************************ Lambo ********************/
+        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        T = translate(mat4(1.0f), vec3(0, -40, 0.0) - mycam.pos);
+        R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
+        R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
+        mat4 temp = T * R2 * R;
+
+        vec3 offsets[4] = {vec3(0.1, 0.0, 0.4), vec3(-0.1, 0.0, 0.4), vec3(0.1, 0.0, -0.4), vec3(-0.1, 0.0, -0.4)};
+
+        gameStats.stuck = false;
+        for (int i = 0; i < 4; i++) {
+            mat4 offset = translate(temp, offsets[i]);
+            int x = round(offset[3][0]/2);
+            int y = 19 - (round(offset[3][2]/2) + 11);
+            if (allBuildings[y + x*20].isVisible && (y + x*20+1) != gameStats.starting && (y + x*20-1) != gameStats.ending) {
+                gameStats.stuck = true;
+                gameStats.carSpeed = 0;
+            }
+        }
+        if (gameStats.stuck) {
+            M = oldM;
+            mycam.pos = oldCamPos;
+            mycam.rot = oldCamRot;
+        } else {
+            M = temp;
+            oldM = temp;
+            oldCamPos = mycam.pos;
+            oldCamRot = mycam.rot;
+        }
+
+        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        shape->draw(shadowProg, false);
+
+        /************************ City Building ********************/
+        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glBindVertexArray(VAOBox);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
+        for (int i = 0; i < allBuildings.size(); i++) {
+            if (!allBuildings[i].isVisible) {
+                continue;
+            }
+            S = scale(mat4(1.0f), vec3(1.0f, 2+allBuildings[i].building.y, 1.0f));
+            T = translate(mat4(1.0f), allBuildings[i].building);
+            M = T * S;
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
+        }
+        glBindVertexArray(0);
+
+//        /************************ City Ground ********************/
+//        glUniformMatrix4fv(shadowProg->getUniform("P"), 1, GL_FALSE, &P[0][0]);
+//        glUniformMatrix4fv(shadowProg->getUniform("V"), 1, GL_FALSE, &V[0][0]);
+//        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//        glBindVertexArray(VAOBox);
+//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
+//        S = scale(mat4(1.0f), vec3(20.0f, 20.0f, 20.0f));
+//        T = translate(mat4(1.0f), vec3(0.0, -26.0, 0.0));
+//        M = T * S;
+//        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
 
         //done, unbind stuff
         shadowProg->unbind();

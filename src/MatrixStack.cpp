@@ -5,6 +5,8 @@
 static const int MaxMatrixSize = 100;
 
 
+extern int yy;
+
 MatrixStack::MatrixStack()
 {
 	stack.push(glm::mat4(1.0));

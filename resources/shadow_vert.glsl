@@ -8,4 +8,5 @@ uniform mat4 M;
 void main()
 {
 	gl_Position = P * V * M * vec4(vertPos, 1.0);
+	
 }

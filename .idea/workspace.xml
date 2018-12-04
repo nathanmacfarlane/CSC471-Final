@@ -16,17 +16,21 @@
     <list default="true" id="342d2bae-b3f9-4b3b-8235-519c57c04dbf" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/CXX.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/MatrixStack.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/MatrixStack.cpp.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/Shape.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/Shape.cpp.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/main.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/main.cpp.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Final" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Final" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/cityTexture.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/cityTexture.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/frag_nolight.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/frag_nolight.glsl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/shader_fragment.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_fragment.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shader_fragment_cube.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_fragment_cube.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shader_fragment_ground.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_fragment_ground.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shader_vertex_cube.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_vertex_cube.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shader_vertex_ground.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_vertex_ground.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/streetLamp.obj" beforeDir="false" afterPath="$PROJECT_DIR$/resources/streetLamp.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shader_fragment_lambo.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_fragment_lambo.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shader_vertex.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_vertex.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shadow_vert.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shadow_vert.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/vert.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/vert.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MatrixStack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/MatrixStack.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Shape.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Shape.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Shape.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Shape.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lab lighting.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/lab lighting.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lab lighting.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/src/lab lighting.vcxproj.filters" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -41,68 +45,111 @@
     <session id="1120950267">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="24" />
+          <entry key="project.closed" value="30" />
           <entry key="project.open.time.0" value="8" />
-          <entry key="project.open.time.1" value="4" />
+          <entry key="project.open.time.1" value="7" />
+          <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.5" value="1" />
-          <entry key="project.open.time.6" value="6" />
+          <entry key="project.open.time.6" value="7" />
           <entry key="project.open.time.7" value="1" />
-          <entry key="project.open.time.8" value="4" />
-          <entry key="project.opened" value="26" />
+          <entry key="project.open.time.8" value="5" />
+          <entry key="project.opened" value="32" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="cpp" value="7" />
           <entry key="deque" value="5" />
-          <entry key="glsl" value="31" />
+          <entry key="glsl" value="59" />
           <entry key="h" value="8" />
+          <entry key="jpg" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="GLSL shader file" value="31" />
+          <entry key="GLSL shader file" value="59" />
+          <entry key="Image" value="1" />
           <entry key="ObjectiveC" value="20" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="cpp" value="16327" />
-          <entry key="glsl" value="2361" />
+          <entry key="cpp" value="17190" />
+          <entry key="glsl" value="3292" />
           <entry key="h" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Doxygen file" value="4" />
-          <entry key="GLSL shader file" value="2361" />
-          <entry key="ObjectiveC" value="16330" />
+          <entry key="GLSL shader file" value="3292" />
+          <entry key="ObjectiveC" value="17193" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-13">
-              <caret line="828" lean-forward="true" selection-start-line="828" selection-end-line="828" />
+            <state relative-caret-position="1091">
+              <caret line="305" column="41" selection-start-line="305" selection-start-column="41" selection-end-line="305" selection-end-column="41" />
               <folding>
                 <element signature="e#71#90#0" expanded="true" />
-                <element signature="e#322#353#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/vert.glsl">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/shader_fragment_lamp.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="7" column="18" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/shader_fragment_lambo.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="465">
+              <caret line="31" column="12" lean-forward="true" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/resources/shader_fragment.glsl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="16" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="16" />
+            <state relative-caret-position="500">
+              <caret line="52" column="21" selection-start-line="52" selection-start-column="21" selection-end-line="52" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/shader_vertex_lambo.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="17" column="28" lean-forward="true" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/shader_vertex.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="20" column="60" selection-start-line="20" selection-start-column="60" selection-end-line="20" selection-end-column="60" />
             </state>
           </provider>
         </entry>
@@ -111,21 +158,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>FALSE</find>
-      <find>vertPos</find>
-      <find>city</find>
-      <find>material</find>
-      <find>ci</find>
-      <find>cit</find>
-      <find>stbi_load</find>
       <find>shapeL</find>
       <find>glenable</find>
       <find>shouldMoveCar</find>
       <find>exitBuilding</find>
       <find>lampos</find>
-      <find>prog</find>
       <find>vertNor</find>
       <find>is not an</find>
+      <find>M_Lamp</find>
+      <find>shape</find>
+      <find>gl_line</find>
+      <find>SHADOW_DIM</find>
+      <find>render_to_shad</find>
+      <find>shader</find>
+      <find>shader_fragment</find>
+      <find>V</find>
+      <find>prog</find>
+      <find>prog2</find>
+      <find>shader_vertex</find>
+      <find>tex</find>
+      <find>initgeo</find>
+      <find>shader_frag</find>
+      <find>lightspace</find>
+      <find>render_to_scree</find>
+      <find>earth_pos</find>
+      <find>m_lam</find>
+      <find>campos</find>
+      <find>mycam.pos</find>
+      <find>cityTex</find>
+      <find>progLamp</find>
+      <find>progLambo</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -136,7 +198,6 @@
       <list>
         <option value="$PROJECT_DIR$/resources/shader_fragment_jeep.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_vertex_jeep.glsl" />
-        <option value="$PROJECT_DIR$/resources/shader_vertex.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_vertex_square.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_fragment_square.glsl" />
         <option value="$PROJECT_DIR$/src/Program.h" />
@@ -144,15 +205,16 @@
         <option value="$PROJECT_DIR$/resources/shader_fragment_ground.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_fragment_cube.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_vertex_lambo.glsl" />
-        <option value="$PROJECT_DIR$/resources/shader_fragment_lambo.glsl" />
-        <option value="$PROJECT_DIR$/resources/shader_fragment.glsl" />
-        <option value="$PROJECT_DIR$/resources/shader_fragment_lamp.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_vertex_lamp.glsl" />
         <option value="$PROJECT_DIR$/src/Shape.h" />
-        <option value="$PROJECT_DIR$/src/Shape.cpp" />
-        <option value="$PROJECT_DIR$/src/main.cpp" />
         <option value="$PROJECT_DIR$/resources/shadow_frag.glsl" />
         <option value="$PROJECT_DIR$/resources/shadow_vert.glsl" />
+        <option value="$PROJECT_DIR$/src/Shape.cpp" />
+        <option value="$PROJECT_DIR$/resources/shader_fragment_lambo.glsl" />
+        <option value="$PROJECT_DIR$/src/main.cpp" />
+        <option value="$PROJECT_DIR$/resources/shader_fragment_lamp.glsl" />
+        <option value="$PROJECT_DIR$/resources/shader_fragment.glsl" />
+        <option value="$PROJECT_DIR$/resources/shader_vertex.glsl" />
       </list>
     </option>
   </component>
@@ -162,7 +224,8 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectFrameBounds">
     <option name="y" value="23" />
     <option name="width" value="1440" />
     <option name="height" value="877" />
@@ -286,11 +349,17 @@
       <workItem from="1543450283197" duration="391000" />
       <workItem from="1543454009382" duration="82000" />
       <workItem from="1543455038855" duration="652000" />
+      <workItem from="1543692312383" duration="595000" />
+      <workItem from="1543693627024" duration="6000" />
+      <workItem from="1543693936031" duration="31000" />
+      <workItem from="1543852273540" duration="5453000" />
+      <workItem from="1543874780777" duration="3988000" />
+      <workItem from="1543950989180" duration="7448000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="117076000" />
+    <option name="totallyTimeSpent" value="140719000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -302,21 +371,21 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="877" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="877" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23462088" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21387696" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49928468" visible="true" weight="0.18980892" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49928468" visible="true" weight="0.14012739" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49928468" weight="0.3299363" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="8" weight="0.32866243" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.3299363" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49928468" weight="0.32866243" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5007153" side_tool="true" weight="0.17961784" />
       <window_info anchor="bottom" id="Version Control" order="11" show_stripe_button="false" />
@@ -363,13 +432,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_jeep.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="15" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/shader_vertex_square.glsl" />
     <entry file="file://$PROJECT_DIR$/resources/shader_fragment_square.glsl" />
     <entry file="file://$PROJECT_DIR$/src/Program.h">
@@ -393,20 +455,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_vertex_lambo.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="28" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_lambo.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ext/glad/include/glad/glad.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="185">
@@ -414,69 +462,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-13">
-          <caret line="828" lean-forward="true" selection-start-line="828" selection-end-line="828" />
-          <folding>
-            <element signature="e#71#90#0" expanded="true" />
-            <element signature="e#322#353#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Shape.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4470">
-          <caret line="298" column="45" selection-start-line="298" selection-start-column="45" selection-end-line="298" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Shape.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
           <caret line="45" column="28" selection-start-line="45" selection-start-column="28" selection-end-line="45" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_lamp.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_vertex_lamp.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="15" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_vertex.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="1" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/frag_nolight.glsl">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/vert.glsl">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_fragment.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="16" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_cube.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="44" selection-start-line="8" selection-start-column="44" selection-end-line="8" selection-end-column="44" />
         </state>
       </provider>
     </entry>
@@ -490,13 +479,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shadow_frag.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="12" selection-start-column="12" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/shader_fragment_ground.glsl">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -504,10 +486,99 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_cube.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="44" selection-start-line="8" selection-start-column="44" selection-end-line="8" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_jeep.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="15" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/frag_nolight.glsl">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Shape.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1260">
+          <caret line="88" column="9" selection-start-line="88" selection-start-column="9" selection-end-line="88" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/lambo_diffuse.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_vertex_lambo.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="28" lean-forward="true" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/resources/shadow_vert.glsl">
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret column="12" selection-start-column="12" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_vertex_lamp.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="15" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_vertex.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="60" selection-start-line="20" selection-start-column="60" selection-end-line="20" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1091">
+          <caret line="305" column="41" selection-start-line="305" selection-start-column="41" selection-end-line="305" selection-end-column="41" />
+          <folding>
+            <element signature="e#71#90#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_lambo.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="31" column="12" lean-forward="true" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_lamp.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="18" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shadow_frag.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="12" selection-start-column="12" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/vert.glsl">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_fragment.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="52" column="21" selection-start-line="52" selection-start-column="21" selection-end-line="52" selection-end-column="21" />
         </state>
       </provider>
     </entry>

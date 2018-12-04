@@ -87,9 +87,6 @@ void Shape::loadMesh(const string &meshName, string *mtlpath, unsigned char *(lo
 			glGenerateMipmap(GL_TEXTURE_2D);
 			//delete[] data;
 		}
-
-	int z;
-	z = 0;
 }
 
 void Shape::resize()
