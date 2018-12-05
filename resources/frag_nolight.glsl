@@ -11,6 +11,5 @@ void main()
 {
 	vec3 texturecolor = texture(tex, fragTex).rgb;
 	color.rgb = texturecolor;
-	color.r = pow(color.r,20);
 	color.a = 1.0;
 }

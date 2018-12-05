@@ -19,6 +19,10 @@ ZJ Wood CPE 471 Lab 3 base code
 using namespace std;
 using namespace glm;
 
+float GROUND_OFFSET = -2.0;
+float CAR_OFFSET = -15;
+float TRANSFORM_FLOOR = 20.0;
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -52,7 +56,7 @@ struct Building {
 
 shared_ptr<Shape> shape, shapeLamp;
 GameStats gameStats;
-mat4 oldM, globalCam = mat4(1.0f);
+mat4 oldM;
 vec3 oldCamPos, oldCamRot;
 Light primaryLight;
 bool show_shadowmap = false;
@@ -139,7 +143,7 @@ public:
 	WindowManager * windowManager = nullptr;
 
 	// Our shader program
-	shared_ptr<Program> progLamp, progCityGround, progCityBuilding, progLambo;
+	shared_ptr<Program> progLamp, /*progCityGround,*/ progCityBuilding, progLambo;
 	shared_ptr<Program> prog2, shadowProg;
 
 	GLuint VAOBox;
@@ -148,7 +152,7 @@ public:
 	GLuint VertexBufferIDBox, VertexArrayIDBox, VertexBufferIDNorm, VertexBufferTex;
 
 	//texture data
-	GLuint Texture, mask,Texture2, citytex;
+	GLuint Texture, mask, Texture2, citytex, streetTex;
 
     vector<Building> allBuildings;
     Building exitBuilding;
@@ -209,7 +213,7 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         //NULL means reserve texture memory, but texels are undefined
         //**** Tell OpenGL to reserve level 0
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
         //You must reserve memory for other mipmaps levels as well either by making a series of calls to
         //glTexImage2D or use glGenerateMipmapEXT(GL_TEXTURE_2D).
         //Here, we'll use :
@@ -293,7 +297,7 @@ public:
 
         progLamp = std::make_shared<Program>();
         progLamp->setVerbose(true);
-        progLamp->setShaderNames(resourceDirectory + "/shader_vertex_lamp.glsl", resourceDirectory + "/shader_fragment_lamp.glsl");
+        progLamp->setShaderNames(resourceDirectory + "/shader_vertex.glsl", resourceDirectory + "/shader_fragment.glsl");
         progLamp->init();
         progLamp->addUniform("P");
         progLamp->addUniform("V");
@@ -305,20 +309,20 @@ public:
         progLamp->addUniform("lightpos");
         progLamp->addUniform("lightdir");
 
-
-        progCityGround = std::make_shared<Program>();
-        progCityGround->setVerbose(true);
-        progCityGround->setShaderNames(resourceDirectory + "/shader_vertex_ground.glsl", resourceDirectory + "/shader_fragment_ground.glsl");
-        if (!progCityGround->init())
-        {
-            std::cerr << "One or more shaders failed to compile... exiting!" << std::endl;
-            exit(1);
-        }
-        progCityGround->addUniform("P");
-        progCityGround->addUniform("V");
-        progCityGround->addUniform("M");
-        progCityGround->addAttribute("vertPos");
-        progCityGround->addAttribute("vertCol");
+//
+//        progCityGround = std::make_shared<Program>();
+//        progCityGround->setVerbose(true);
+//        progCityGround->setShaderNames(resourceDirectory + "/shader_vertex.glsl", resourceDirectory + "/shader_fragment.glsl");
+//        if (!progCityGround->init())
+//        {
+//            std::cerr << "One or more shaders failed to compile... exiting!" << std::endl;
+//            exit(1);
+//        }
+//        progCityGround->addUniform("P");
+//        progCityGround->addUniform("V");
+//        progCityGround->addUniform("M");
+//        progCityGround->addAttribute("vertPos");
+//        progCityGround->addAttribute("vertCol");
 
 
 
@@ -337,6 +341,9 @@ public:
         progCityBuilding->addAttribute("vertPos");
         progCityBuilding->addAttribute("vertCol");
 		progCityBuilding->addAttribute("vertTex");
+        progCityBuilding->addUniform("lamps");
+        progCityBuilding->addUniform("isGround");
+        progCityBuilding->addUniform("isLamp");
 
 
 		// Initialize the Shadow Map shader program.
@@ -359,11 +366,6 @@ public:
 	void initGeom()
 	{
 		string resourceDirectory = "../resources" ;
-
-        // Initialize light structures.
-        primaryLight.position = vec3(10.0f, 0.0f, 10.0f);
-//        primaryLight.direction = normalize(earth_pos - primaryLight.position);
-        primaryLight.color = vec3(1.0f, 1.0f, 1.0f);
 
         //init rectangle mesh (2 triangles) for the post processing
         glGenVertexArrays(1, &VertexArrayIDBox);
@@ -451,7 +453,7 @@ public:
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		//texture 1
-		str = resourceDirectory + "/citytex.jpg";
+		str = resourceDirectory + "/daycity.jpg";
 		strcpy(filepath, str.c_str());
 		data = stbi_load(filepath, &width, &height, &channels, 4);
 		glGenTextures(1, &citytex);
@@ -476,6 +478,19 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
+        // another one
+        str = resourceDirectory + "/street.jpg";
+        strcpy(filepath, str.c_str());
+        data = stbi_load(filepath, &width, &height, &channels, 4);
+        glGenTextures(1, &streetTex);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, streetTex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
 
         //[TWOTEXTURES]
         GLuint Tex1Location = glGetUniformLocation(progLambo->pid, "tex");
@@ -484,13 +499,16 @@ public:
         glUniform1i(Tex1Location, 0);
         glUniform1i(Tex2Location, 1);
 
-        Tex1Location = glGetUniformLocation(progCityBuilding->pid, "shadowMapTex");
         glUseProgram(progCityBuilding->pid);
+        Tex1Location = glGetUniformLocation(progCityBuilding->pid, "shadowMapTex");
         glUniform1i(Tex1Location, 2);
 		GLuint texloc = glGetUniformLocation(progCityBuilding->pid, "tex");
 		glUniform1i(texloc, 0);
 		GLuint texloc3 = glGetUniformLocation(progCityBuilding->pid, "mask");
 		glUniform1i(texloc3, 1);
+        GLuint texloc4 = glGetUniformLocation(progCityBuilding->pid, "streetTex");
+        glUniform1i(texloc4, 3);
+
 		// cube
         glGenVertexArrays(1, &VAOBox);
         glBindVertexArray(VAOBox);
@@ -595,7 +613,7 @@ public:
         // populate buildings
         for (int x = 0; x < rowColNum; x++) {
             for (int z = 0; z < rowColNum; z++) {
-                int myRand = rand() % 100 + 1;
+                int myRand = rand() % 30 + 1;
                 vec3 buildingPos = vec3(x*2, (float) myRand / 13, 16 + -z*2);
                 Building temp;
                 temp.building = buildingPos;
@@ -686,8 +704,8 @@ public:
         // Debug, shows shadow map when 'y' is pressed
         show_shadowmap ? glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth) : glBindTexture(GL_TEXTURE_2D, FBOtex);
 
-        M = glm::scale(glm::mat4(1),glm::vec3(1.2,1,1)) * glm::translate(glm::mat4(1), glm::vec3(-0.5, -0.5, -1));
-        glUniformMatrix4fv(prog2->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P->topMatrix()));
+        M = scale(glm::mat4(1), vec3(1.2,1,1)) * translate(glm::mat4(1), vec3(-0.5, -0.5, -1));
+        glUniformMatrix4fv(prog2->getUniform("P"), 1, GL_FALSE, value_ptr(P->topMatrix()));
         glUniformMatrix4fv(prog2->getUniform("V"), 1, GL_FALSE, &V[0][0]);
         glUniformMatrix4fv(prog2->getUniform("M"), 1, GL_FALSE, &M[0][0]);
         glBindVertexArray(VertexArrayIDBox);
@@ -718,8 +736,8 @@ public:
         // Change earth_pos (or primaryLight.direction) to change where the light is pointing at.
        // lightV = glm::lookAt(mycam.pos + vec3(0, 0, 0), mycam.pos + vec3(0,0,-1), glm::vec3(0.0f, 1.0f, 0.0f))*R;
 
-		glm::mat4 R = glm::rotate(glm::mat4(1), mycam.rot.y, glm::vec3(0, 1, 0));
-		glm::mat4 T = glm::translate(glm::mat4(1), mycam.pos + vec3(0,13.95,0));
+		mat4 R = rotate(glm::mat4(1), mycam.rot.y, vec3(0, 1, 0));
+		mat4 T = translate(glm::mat4(1), mycam.pos + vec3(0,14.75,0));
 		lightV = R  * T;
     }
 
@@ -749,82 +767,81 @@ public:
         P = glm::perspective((float)(3.14159 / 4.), (float)((float)width/ (float)height), 0.1f, 20.0f); //so much type casting... GLM metods are quite funny ones
 
         V = mycam.process(frametime);
-        globalCam = V;
 
         /******************************* LAMP ******************************/
-        progLamp->bind();
-        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
-        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
-        vec3 exitColor = vec3(0.0, 1.0, 0.0);
-        glUniformMatrix4fv(progLamp->getUniform("P"), 1, GL_FALSE, &P[0][0]);
-        glUniformMatrix4fv(progLamp->getUniform("V"), 1, GL_FALSE, &V[0][0]);
-        glUniform3fv(progLamp->getUniform("Color"), 1, &entranceColor[0]);
-        glUniformMatrix4fv(progLamp->getUniform("lightSpace"), 1, GL_FALSE, &lightSpace[0][0]);
-        glUniform3fv(progLamp->getUniform("campos"), 1, &mycam.pos.x);
-        glUniform3fv(progLamp->getUniform("lightpos"), 1, &primaryLight.position.x);
-        glUniform3fv(progLamp->getUniform("lightdir"), 1, &primaryLight.direction.x);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
-        // entrance lamps
-        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
-        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
-        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
-        M = T * S * R;
-        glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        shapeLamp->draw(progLamp, false);
-        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
-        M = T * S * R;
-        glUniform3fv(progLamp->getUniform("Color"), 1, &entranceColor[0]);
-        glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        shapeLamp->draw(progLamp, false);
-        // exit lamps
-        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
-            M = T * S;
-            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(progLamp, false);
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
-            M = T * S;
-            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(progLamp, false);
-        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
-            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
-            M = T * S * R;
-            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(progLamp, false);
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
-            M = T * S * R;
-            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(progLamp, false);
-        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
-            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
-            M = T * S * R;
-            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(progLamp, false);
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
-            M = T * S * R;
-            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(progLamp, false);
-        }
-        progLamp->unbind();
+//        progLamp->bind();
+//        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
+//        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
+//        vec3 exitColor = vec3(0.0, 1.0, 0.0);
+//        glUniformMatrix4fv(progLamp->getUniform("P"), 1, GL_FALSE, &P[0][0]);
+//        glUniformMatrix4fv(progLamp->getUniform("V"), 1, GL_FALSE, &V[0][0]);
+//        glUniform3fv(progLamp->getUniform("Color"), 1, &entranceColor[0]);
+//        glUniformMatrix4fv(progLamp->getUniform("lightSpace"), 1, GL_FALSE, &lightSpace[0][0]);
+//        glUniform3fv(progLamp->getUniform("campos"), 1, &mycam.pos.x);
+//        glUniform3fv(progLamp->getUniform("lightpos"), 1, &primaryLight.position.x);
+//        glUniform3fv(progLamp->getUniform("lightdir"), 1, &primaryLight.direction.x);
+//        glActiveTexture(GL_TEXTURE1);
+//        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
+//        // entrance lamps
+//        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
+//        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
+//        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
+//        M = T * S * R;
+//        glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//        shapeLamp->draw(progLamp, false);
+//        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
+//        M = T * S * R;
+//        glUniform3fv(progLamp->getUniform("Color"), 1, &entranceColor[0]);
+//        glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//        shapeLamp->draw(progLamp, false);
+//        // exit lamps
+//        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
+//            M = T * S;
+//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(progLamp, false);
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
+//            M = T * S;
+//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(progLamp, false);
+//        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
+//            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
+//            M = T * S * R;
+//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(progLamp, false);
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
+//            M = T * S * R;
+//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(progLamp, false);
+//        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
+//            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
+//            M = T * S * R;
+//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(progLamp, false);
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
+//            M = T * S * R;
+//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
+//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(progLamp, false);
+//        }
+//        progLamp->unbind();
 
-//        /************************ City Ground ********************/
+        /************************ City Ground ********************/
 //        progCityGround->bind();
 //        glUniformMatrix4fv(progCityGround->getUniform("P"), 1, GL_FALSE, &P[0][0]);
 //        glUniformMatrix4fv(progCityGround->getUniform("V"), 1, GL_FALSE, &V[0][0]);
 //        glUniformMatrix4fv(progCityGround->getUniform("M"), 1, GL_FALSE, &M[0][0]);
 //        glBindVertexArray(VAOBox);
 //        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
-//        S = scale(mat4(1.0f), vec3(20.0f, 20.0f, 20.0f));
-//        T = translate(mat4(1.0f), vec3(0.0, -20.0, 0.0));
+//        S = scale(mat4(1.0f), vec3(20.0f, 1.0f, 20.0f));
+//        T = translate(mat4(1.0f), vec3(0.0, GROUND_OFFSET, 0.0));
 //        M = T * S;
 //        glUniformMatrix4fv(progCityGround->getUniform("M"), 1, GL_FALSE, &M[0][0]);
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
@@ -835,8 +852,8 @@ public:
         glUniformMatrix4fv(progLambo->getUniform("P"), 1, GL_FALSE, &P[0][0]);
         glUniformMatrix4fv(progLambo->getUniform("V"), 1, GL_FALSE, &V[0][0]);
         glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        S = scale(mat4(1.0f), vec3(0.6f, 0.6f, 0.6f));
-        T = translate(mat4(1.0f), vec3(0, -20, 0.0) - mycam.pos);
+        S = scale(mat4(1.0f), vec3(0.9f, 0.9f, 0.9f));
+        T = translate(mat4(1.0f), vec3(0, CAR_OFFSET, 0.0) - mycam.pos);
         R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
         R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
         mat4 temp = T * R2 * R * S;
@@ -876,7 +893,7 @@ public:
         glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
         glBindVertexArray(VAOBox);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
-      
+
 		glUniformMatrix4fv(progCityBuilding->getUniform("lightSpace"), 1, GL_FALSE, &lightSpace[0][0]);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -885,6 +902,10 @@ public:
 		glBindTexture(GL_TEXTURE_2D, mask);
 		glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, streetTex);
+        glUniform1f(progCityBuilding->getUniform("isGround"), 0.0);
+        glUniform1f(progCityBuilding->getUniform("isLamp"), 0.0);
         for (int i = 0; i < allBuildings.size(); i++) {
             if (!allBuildings[i].isVisible) {
                 continue;
@@ -895,6 +916,89 @@ public:
             glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
         }
+        /******************************* GROUND **************************/
+        glUniform1f(progCityBuilding->getUniform("isGround"), 1.0);
+        glUniform1f(progCityBuilding->getUniform("isLamp"), 0.0);
+        S = scale(mat4(1.0f), vec3(22.0f, 1.0f, 22.0f));
+        T = translate(mat4(1.0f), vec3(TRANSFORM_FLOOR, GROUND_OFFSET, -4.0));
+        M = T * S;
+        glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
+
+        /*************************** LAMP ********************************/
+        vector<vec3> lamps;
+        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
+        vec3 exitColor = vec3(0.0, 1.0, 0.0);
+        glUniformMatrix4fv(progCityBuilding->getUniform("P"), 1, GL_FALSE, &P[0][0]);
+        glUniformMatrix4fv(progCityBuilding->getUniform("V"), 1, GL_FALSE, &V[0][0]);
+        glUniform3fv(progCityBuilding->getUniform("Color"), 1, &entranceColor[0]);
+        glUniformMatrix4fv(progCityBuilding->getUniform("lightSpace"), 1, GL_FALSE, &lightSpace[0][0]);
+        glUniform3fv(progCityBuilding->getUniform("campos"), 1, &mycam.pos.x);
+        glUniform3fv(progCityBuilding->getUniform("lightpos"), 1, &primaryLight.position.x);
+        glUniform3fv(progCityBuilding->getUniform("lightdir"), 1, &primaryLight.direction.x);
+        glUniform3fv(progCityBuilding->getUniform("lamps"), lamps.size(), reinterpret_cast<GLfloat *>(lamps.data()));
+        glUniform1f(progCityBuilding->getUniform("isGround"), 0.0);
+        glUniform1f(progCityBuilding->getUniform("isLamp"), 1.0);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
+        // entrance lamps
+        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
+        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
+        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
+        M = T * S * R;
+        vec3 lampPos = vec3(M[3][0], 1.3, M[3][2]);
+        cout << "lampPos1: " << lampPos.x << " " << lampPos.y << " " << lampPos.z << endl;
+        lamps.push_back(lampPos);
+        glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glUniform3fv(progCityBuilding->getUniform("lamps"), lamps.size(), reinterpret_cast<GLfloat *>(lamps.data()));
+        shapeLamp->draw(progCityBuilding, false);
+        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
+        M = T * S * R;
+        lampPos = vec3(M[3][0], 1.3, M[3][2]);
+        cout << "lampPos2: " << lampPos.x << " " << lampPos.y << " " << lampPos.z << endl;
+        lamps.push_back(lampPos);
+        glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glUniform3fv(progCityBuilding->getUniform("lamps"), lamps.size(), reinterpret_cast<GLfloat *>(lamps.data()));
+        shapeLamp->draw(progCityBuilding, false);
+        // exit lamps
+        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
+            M = T * S;
+            glUniform3fv(progCityBuilding->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progCityBuilding, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
+            M = T * S;
+            glUniform3fv(progCityBuilding->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progCityBuilding, false);
+        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
+            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
+            M = T * S * R;
+            glUniform3fv(progCityBuilding->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progCityBuilding, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
+            M = T * S * R;
+            glUniform3fv(progCityBuilding->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progCityBuilding, false);
+        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
+            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
+            M = T * S * R;
+            glUniform3fv(progCityBuilding->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progCityBuilding, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
+            M = T * S * R;
+            glUniform3fv(progCityBuilding->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(progCityBuilding, false);
+        }
+
+
         progCityBuilding->unbind();
         glBindVertexArray(0);
 
@@ -923,9 +1027,6 @@ public:
         get_light_view_matrix(V);
         T = translate(mat4(1.0f), vec3(0,0,0));
 
-		mat4 TV = translate(mat4(1.0f), vec3(1.2, 0, -1.2));
-		mat4 VR = rotate(mat4(1.0f), (float) -3.14 / 2, vec3(1.0f, 0.0f, 0.0f));
-
         // Bind shadow map shader program and matrix uniforms.
         shadowProg->bind();
         glUniformMatrix4fv(shadowProg->getUniform("P"), 1, GL_FALSE, &P[0][0]);
@@ -952,63 +1053,64 @@ public:
         glm::mat4 R, T1, R2, R3, T2, T3, R4;
         M = glm::mat4(1);
 
-        /******************************* LAMP ******************************/
-        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
-        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
-        vec3 exitColor = vec3(0.0, 1.0, 0.0);
-        glUniformMatrix4fv(shadowProg->getUniform("P"), 1, GL_FALSE, &P[0][0]);
-        glUniformMatrix4fv(shadowProg->getUniform("V"), 1, GL_FALSE, &V[0][0]);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
-        // entrance lamps
-        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
-        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
-        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
-        M = T * S * R;
-        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        shapeLamp->draw(shadowProg, false);
-        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
-        M = T * S * R;
-        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        shapeLamp->draw(shadowProg, false);
-        // exit lamps
-        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
-            M = T * S;
-            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(shadowProg, false);
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
-            M = T * S;
-            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(shadowProg, false);
-        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
-            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
-            M = T * S * R;
-            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(shadowProg, false);
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
-            M = T * S * R;
-            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(shadowProg, false);
-        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
-            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
-            M = T * S * R;
-            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(shadowProg, false);
-            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
-            M = T * S * R;
-            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            shapeLamp->draw(shadowProg, false);
-        }
+//        /******************************* LAMP ******************************/
+//        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
+//        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
+//        vec3 exitColor = vec3(0.0, 1.0, 0.0);
+//        glUniformMatrix4fv(shadowProg->getUniform("P"), 1, GL_FALSE, &P[0][0]);
+//        glUniformMatrix4fv(shadowProg->getUniform("V"), 1, GL_FALSE, &V[0][0]);
+//        glActiveTexture(GL_TEXTURE1);
+//        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
+//        // entrance lamps
+//        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
+//        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
+//        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
+//        M = T * S * R;
+//        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//        shapeLamp->draw(shadowProg, false);
+//        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
+//        M = T * S * R;
+//        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//        shapeLamp->draw(shadowProg, false);
+//        // exit lamps
+//        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
+//            M = T * S;
+//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(shadowProg, false);
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
+//            M = T * S;
+//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(shadowProg, false);
+//        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
+//            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
+//            M = T * S * R;
+//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(shadowProg, false);
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
+//            M = T * S * R;
+//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(shadowProg, false);
+//        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
+//            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
+//            M = T * S * R;
+//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(shadowProg, false);
+//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
+//            M = T * S * R;
+//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+//            shapeLamp->draw(shadowProg, false);
+//        }
 
         /************************ Lambo ********************/
         glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        T = translate(mat4(1.0f), vec3(0, -40, 0.0) - mycam.pos);
+        S = scale(mat4(1.0f), vec3(0.9f, 0.9f, 0.9f));
+        T = translate(mat4(1.0f), vec3(0, CAR_OFFSET, 0.0) - mycam.pos);
         R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
         R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
-        mat4 temp = T * R2 * R;
+        mat4 temp = T * R2 * R * S;
 
         vec3 offsets[4] = {vec3(0.1, 0.0, 0.4), vec3(-0.1, 0.0, 0.4), vec3(0.1, 0.0, -0.4), vec3(-0.1, 0.0, -0.4)};
 
@@ -1050,19 +1152,79 @@ public:
             glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
         }
-        glBindVertexArray(0);
 
-//        /************************ City Ground ********************/
-//        glUniformMatrix4fv(shadowProg->getUniform("P"), 1, GL_FALSE, &P[0][0]);
-//        glUniformMatrix4fv(shadowProg->getUniform("V"), 1, GL_FALSE, &V[0][0]);
-//        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//        glBindVertexArray(VAOBox);
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
-//        S = scale(mat4(1.0f), vec3(20.0f, 20.0f, 20.0f));
-//        T = translate(mat4(1.0f), vec3(0.0, -26.0, 0.0));
-//        M = T * S;
-//        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
+        /************************ City Ground ********************/
+        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glBindVertexArray(VAOBox);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
+        S = scale(mat4(1.0f), vec3(22.0f, 1.0f, 22.0f));
+        T = translate(mat4(1.0f), vec3(TRANSFORM_FLOOR, GROUND_OFFSET, -4.0));
+        M = T * S;
+        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
+
+        /*************************** LAMP ********************************/
+        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
+        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
+        vec3 exitColor = vec3(0.0, 1.0, 0.0);
+        glUniform3fv(shadowProg->getUniform("Color"), 1, &entranceColor[0]);
+        glUniformMatrix4fv(shadowProg->getUniform("lightSpace"), 1, GL_FALSE, &lightSpace[0][0]);
+        glUniform3fv(shadowProg->getUniform("campos"), 1, &mycam.pos.x);
+        glUniform3fv(shadowProg->getUniform("lightpos"), 1, &primaryLight.position.x);
+        glUniform3fv(shadowProg->getUniform("lightdir"), 1, &primaryLight.direction.x);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
+        // entrance lamps
+        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
+        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
+        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
+        M = T * S * R;
+        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        shapeLamp->draw(shadowProg, false);
+        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
+        M = T * S * R;
+        glUniform3fv(shadowProg->getUniform("Color"), 1, &entranceColor[0]);
+        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        shapeLamp->draw(shadowProg, false);
+        // exit lamps
+        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
+            M = T * S;
+            glUniform3fv(shadowProg->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
+            M = T * S;
+            glUniform3fv(shadowProg->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
+            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
+            M = T * S * R;
+            glUniform3fv(shadowProg->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
+            M = T * S * R;
+            glUniform3fv(shadowProg->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
+            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
+            M = T * S * R;
+            glUniform3fv(shadowProg->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
+            M = T * S * R;
+            glUniform3fv(shadowProg->getUniform("Color"), 1, &exitColor[0]);
+            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+            shapeLamp->draw(shadowProg, false);
+        }
+
+        glBindVertexArray(0);
 
         //done, unbind stuff
         shadowProg->unbind();

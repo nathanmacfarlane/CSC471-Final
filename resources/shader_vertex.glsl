@@ -7,14 +7,17 @@ uniform mat4 P;
 uniform mat4 V;
 uniform mat4 lightSpace;
 uniform mat4 M;
+uniform vec3 lamps[10];
 
 out vec3 vertex_pos;
 out vec3 vertex_normal;
 out vec2 vertex_tex;
 out vec4 fragLightSpacePos;
+out vec3 lps[10];
 
 void main()
 {
+    lps = lamps;
     vertex_tex = vertTex;
 	vertex_pos = (M * vec4(vertPos, 1.0)).xyz;
 	vertex_normal = (M * vec4(vertNor, 0.0)).xyz;
