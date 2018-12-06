@@ -16,12 +16,10 @@
     <list default="true" id="342d2bae-b3f9-4b3b-8235-519c57c04dbf" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Final.dir/src/main.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Final" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/frag_nolight.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/frag_nolight.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Final" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Final" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/cityatnight.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/shader_fragment.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_fragment.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shader_fragment_ground.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_fragment_ground.glsl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/shader_fragment_lambo.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_fragment_lambo.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shader_vertex.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shader_vertex.glsl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -36,9 +34,9 @@
     <session id="1120950267">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="31" />
-          <entry key="project.open.time.0" value="8" />
-          <entry key="project.open.time.1" value="7" />
+          <entry key="project.closed" value="33" />
+          <entry key="project.open.time.0" value="9" />
+          <entry key="project.open.time.1" value="8" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.3" value="1" />
@@ -46,14 +44,14 @@
           <entry key="project.open.time.6" value="8" />
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.8" value="5" />
-          <entry key="project.opened" value="33" />
+          <entry key="project.opened" value="35" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="cpp" value="9" />
           <entry key="deque" value="5" />
-          <entry key="glsl" value="63" />
+          <entry key="glsl" value="67" />
           <entry key="h" value="8" />
           <entry key="inl" value="1" />
           <entry key="jpg" value="1" />
@@ -61,23 +59,23 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="GLSL shader file" value="63" />
+          <entry key="GLSL shader file" value="67" />
           <entry key="Image" value="1" />
           <entry key="ObjectiveC" value="23" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="cpp" value="18002" />
-          <entry key="glsl" value="3901" />
+          <entry key="cpp" value="20345" />
+          <entry key="glsl" value="5057" />
           <entry key="h" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Doxygen file" value="6" />
-          <entry key="GLSL shader file" value="3901" />
-          <entry key="ObjectiveC" value="18003" />
+          <entry key="Doxygen file" value="7" />
+          <entry key="GLSL shader file" value="5057" />
+          <entry key="ObjectiveC" value="20345" />
         </counts>
       </usages-collector>
     </session>
@@ -87,8 +85,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="957" column="25" selection-start-line="957" selection-start-column="25" selection-end-line="957" selection-end-column="25" />
+            <state relative-caret-position="283">
+              <caret line="871" column="19" selection-start-line="871" selection-start-column="19" selection-end-line="871" selection-end-column="19" />
               <folding>
                 <element signature="e#71#90#0" expanded="true" />
               </folding>
@@ -99,8 +97,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/shader_fragment.glsl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="70" column="53" selection-start-line="70" selection-start-column="53" selection-end-line="70" selection-end-column="53" />
+            <state relative-caret-position="175">
+              <caret line="110" column="9" selection-start-line="110" selection-start-column="9" selection-end-line="110" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -108,8 +106,26 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/shader_vertex.glsl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
+            <state relative-caret-position="30">
+              <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/shader_fragment_lambo.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/shader_vertex_lambo.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="17" column="28" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -118,36 +134,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>cityTex</find>
-      <find>progLambo</find>
-      <find>bgra</find>
-      <find>rgb</find>
-      <find>rbga</find>
-      <find>rgba8</find>
-      <find>24</find>
-      <find>rgba</find>
-      <find>cityte</find>
-      <find>car_offset</find>
-      <find>CAR_OFFSET</find>
-      <find>city</find>
-      <find>get_light_view_matrix</find>
-      <find>progCityGround</find>
-      <find>look</find>
-      <find>progcityground</find>
-      <find>progCityBuilding</find>
-      <find>isBraking</find>
-      <find>glUniform1f(progLambo-&gt;getUniform(&quot;isBraking&quot;), gameStats.isBraking);</find>
-      <find>citytex</find>
-      <find>streetTex</find>
-      <find>initgeom</find>
-      <find>TRANSFORM_FLOOR</find>
-      <find>stuck</find>
       <find>progLamp</find>
       <find>isFloor</find>
       <find>isGroun</find>
       <find>lampPos</find>
       <find>tex</find>
       <find>lamppos</find>
+      <find>stuck</find>
+      <find>CAR_TOP</find>
+      <find>offsets</find>
+      <find>ground</find>
+      <find>GROUND</find>
+      <find>street</find>
+      <find>GROUND_ROTATE</find>
+      <find>rend</find>
+      <find>geom</find>
+      <find>headmask</find>
+      <find>road</find>
+      <find>road4</find>
+      <find>streetTex</find>
+      <find>roadTexInt</find>
+      <find>2WayTopBottom</find>
+      <find>2Way</find>
+      <find>road0</find>
+      <find>roadDir</find>
+      <find>filepath</find>
+      <find>citytex</find>
+      <find>generateRoadTextures</find>
+      <find>getTextureStr</find>
+      <find>campos</find>
+      <find>carpos</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -171,9 +187,9 @@
         <option value="$PROJECT_DIR$/src/Shape.cpp" />
         <option value="$PROJECT_DIR$/resources/shader_fragment_lamp.glsl" />
         <option value="$PROJECT_DIR$/resources/frag_nolight.glsl" />
-        <option value="$PROJECT_DIR$/resources/shader_fragment_lambo.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_fragment_ground.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_vertex.glsl" />
+        <option value="$PROJECT_DIR$/resources/shader_fragment_lambo.glsl" />
         <option value="$PROJECT_DIR$/resources/shader_fragment.glsl" />
         <option value="$PROJECT_DIR$/src/main.cpp" />
       </list>
@@ -188,7 +204,7 @@
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="23" />
-    <option name="width" value="1440" />
+    <option name="width" value="720" />
     <option name="height" value="877" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -316,12 +332,14 @@
       <workItem from="1543852273540" duration="5453000" />
       <workItem from="1543874780777" duration="3988000" />
       <workItem from="1543950989180" duration="10843000" />
-      <workItem from="1543988972142" duration="11511000" />
+      <workItem from="1543988972142" duration="12390000" />
+      <workItem from="1544028360975" duration="14745000" />
+      <workItem from="1544061926998" duration="8167000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="155625000" />
+    <option name="totallyTimeSpent" value="179416000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -341,13 +359,13 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49928468" visible="true" weight="0.29808918" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49928468" visible="true" weight="0.0719603" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3325062" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49928468" weight="0.3299363" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="8" weight="0.3299363" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.3287841" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49928468" weight="0.32866243" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5007153" side_tool="true" weight="0.17961784" />
       <window_info anchor="bottom" id="Version Control" order="11" show_stripe_button="false" />
@@ -479,21 +497,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_vertex_lambo.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="28" lean-forward="true" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Program.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#1#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Shape.cpp">
       <provider selected="true" editor-type-id="text-editor">
@@ -519,13 +524,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_lambo.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/shader_fragment_ground.glsl">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -542,22 +540,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/shader_vertex.glsl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
+        <state relative-caret-position="30">
+          <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_fragment_lambo.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shader_vertex_lambo.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="28" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/shader_fragment.glsl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="70" column="53" selection-start-line="70" selection-start-column="53" selection-end-line="70" selection-end-column="53" />
+        <state relative-caret-position="175">
+          <caret line="110" column="9" selection-start-line="110" selection-start-column="9" selection-end-line="110" selection-end-column="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="957" column="25" selection-start-line="957" selection-start-column="25" selection-end-line="957" selection-end-column="25" />
+        <state relative-caret-position="283">
+          <caret line="871" column="19" selection-start-line="871" selection-start-column="19" selection-end-line="871" selection-end-column="19" />
           <folding>
             <element signature="e#71#90#0" expanded="true" />
           </folding>

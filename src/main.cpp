@@ -21,10 +21,17 @@ using namespace glm;
 
 float GROUND_OFFSET = -2.0;
 float CAR_OFFSET = -15;
+float CAR_SCALE = 0.5f;
+float CAR_SIDE = 0.6;
+float CAR_TOP = 0.8;
 float TRANSFORM_FLOOR = 20.0;
+
+
+mat4 GROUND_ROTATE = rotate(mat4(1.0f), (float) M_PI/2, vec3(0.0f, 0.0f, 1.0));
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#define NUM_TEXTURES 12
 
 struct GameStats {
 	int top;
@@ -110,7 +117,7 @@ public:
             gameStats.isBraking = 0.0;
         }
 
-        speed = -3 * ftime * gameStats.carSpeed;
+        speed = -5 * ftime * gameStats.carSpeed;
 
 		float yangle=0;
 
@@ -152,7 +159,18 @@ public:
 	GLuint VertexBufferIDBox, VertexArrayIDBox, VertexBufferIDNorm, VertexBufferTex;
 
 	//texture data
-	GLuint Texture, mask, Texture2, citytex, streetTex;
+	GLuint Texture, mask, Texture2, citytex;
+	// street textures
+	GLuint road2WayHorizontal, road2WayVertical, Road3WayNoBottom, Road3WayNoLeft, road3WayNoRight, Road3WayNoTop, road4Way, roadCornerBottomLeft, roadCornerBottomRight, roadCornerTopLeft, roadCornerTopRight, road1WayBottom;
+
+    string roadTextures[NUM_TEXTURES] = {"road2WayHorizontal", "road2WayVertical", "Road3WayNoBottom", "Road3WayNoLeft", "road3WayNoRight", "Road3WayNoTop", "road4Way", "roadCornerBottomLeft",
+                                         "roadCornerBottomRight", "roadCornerTopLeft", "roadCornerTopRight", "road1WayBottom"};
+    GLuint texturePid[NUM_TEXTURES] = {road2WayHorizontal, road2WayVertical, Road3WayNoBottom, Road3WayNoLeft, road3WayNoRight,
+                                       Road3WayNoTop, road4Way, roadCornerBottomLeft, roadCornerBottomRight, roadCornerTopLeft, roadCornerTopRight, road1WayBottom};
+
+    string isBlocked[NUM_TEXTURES] = {"isRoad2WayHorizontal", "isRoad2WayVertical", "isRoad3WayNoBottom", "isRoad3WayNoLeft", "isRoad3WayNoRight", "isRoad3WayNoTop",
+                                      "isRoad4Way", "isRoadCornerBottomLeft", "isRoadCornerBottomRight", "isRoadCornerTopLeft", "isRoadCornerTopRight", "isRoad1WayBottom"};
+
 
     vector<Building> allBuildings;
     Building exitBuilding;
@@ -309,22 +327,6 @@ public:
         progLamp->addUniform("lightpos");
         progLamp->addUniform("lightdir");
 
-//
-//        progCityGround = std::make_shared<Program>();
-//        progCityGround->setVerbose(true);
-//        progCityGround->setShaderNames(resourceDirectory + "/shader_vertex.glsl", resourceDirectory + "/shader_fragment.glsl");
-//        if (!progCityGround->init())
-//        {
-//            std::cerr << "One or more shaders failed to compile... exiting!" << std::endl;
-//            exit(1);
-//        }
-//        progCityGround->addUniform("P");
-//        progCityGround->addUniform("V");
-//        progCityGround->addUniform("M");
-//        progCityGround->addAttribute("vertPos");
-//        progCityGround->addAttribute("vertCol");
-
-
 
         progCityBuilding = std::make_shared<Program>();
         progCityBuilding->setVerbose(true);
@@ -344,6 +346,18 @@ public:
         progCityBuilding->addUniform("lamps");
         progCityBuilding->addUniform("isGround");
         progCityBuilding->addUniform("isLamp");
+        progCityBuilding->addUniform("isRoad2WayHorizontal");
+        progCityBuilding->addUniform("isRoad2WayVertical");
+        progCityBuilding->addUniform("isRoad3WayNoBottom");
+        progCityBuilding->addUniform("isRoad3WayNoLeft");
+        progCityBuilding->addUniform("isRoad3WayNoRight");
+        progCityBuilding->addUniform("isRoad3WayNoTop");
+        progCityBuilding->addUniform("isRoad4Way");
+        progCityBuilding->addUniform("isRoadCornerBottomLeft");
+        progCityBuilding->addUniform("isRoadCornerBottomRight");
+        progCityBuilding->addUniform("isRoadCornerTopLeft");
+        progCityBuilding->addUniform("isRoadCornerTopRight");
+        progCityBuilding->addUniform("isRoad1WayBottom");
 
 
 		// Initialize the Shadow Map shader program.
@@ -478,22 +492,9 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
-        // another one
-        str = resourceDirectory + "/street.jpg";
-        strcpy(filepath, str.c_str());
-        data = stbi_load(filepath, &width, &height, &channels, 4);
-        glGenTextures(1, &streetTex);
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, streetTex);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
 
         //[TWOTEXTURES]
-        GLuint Tex1Location = glGetUniformLocation(progLambo->pid, "tex");
+        GLuint Tex1Location = glGetUniformLocation(progLambo->pid, "texL");
         GLuint Tex2Location = glGetUniformLocation(progLambo->pid, "tex2");
         glUseProgram(progLambo->pid);
         glUniform1i(Tex1Location, 0);
@@ -506,8 +507,7 @@ public:
 		glUniform1i(texloc, 0);
 		GLuint texloc3 = glGetUniformLocation(progCityBuilding->pid, "mask");
 		glUniform1i(texloc3, 1);
-        GLuint texloc4 = glGetUniformLocation(progCityBuilding->pid, "streetTex");
-        glUniform1i(texloc4, 3);
+        generateRoadTextures();
 
 		// cube
         glGenVertexArrays(1, &VAOBox);
@@ -768,98 +768,21 @@ public:
 
         V = mycam.process(frametime);
 
-        /******************************* LAMP ******************************/
-//        progLamp->bind();
-//        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
-//        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
-//        vec3 exitColor = vec3(0.0, 1.0, 0.0);
-//        glUniformMatrix4fv(progLamp->getUniform("P"), 1, GL_FALSE, &P[0][0]);
-//        glUniformMatrix4fv(progLamp->getUniform("V"), 1, GL_FALSE, &V[0][0]);
-//        glUniform3fv(progLamp->getUniform("Color"), 1, &entranceColor[0]);
-//        glUniformMatrix4fv(progLamp->getUniform("lightSpace"), 1, GL_FALSE, &lightSpace[0][0]);
-//        glUniform3fv(progLamp->getUniform("campos"), 1, &mycam.pos.x);
-//        glUniform3fv(progLamp->getUniform("lightpos"), 1, &primaryLight.position.x);
-//        glUniform3fv(progLamp->getUniform("lightdir"), 1, &primaryLight.direction.x);
-//        glActiveTexture(GL_TEXTURE1);
-//        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
-//        // entrance lamps
-//        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
-//        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
-//        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
-//        M = T * S * R;
-//        glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//        shapeLamp->draw(progLamp, false);
-//        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
-//        M = T * S * R;
-//        glUniform3fv(progLamp->getUniform("Color"), 1, &entranceColor[0]);
-//        glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//        shapeLamp->draw(progLamp, false);
-//        // exit lamps
-//        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
-//            M = T * S;
-//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(progLamp, false);
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
-//            M = T * S;
-//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(progLamp, false);
-//        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
-//            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
-//            M = T * S * R;
-//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(progLamp, false);
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
-//            M = T * S * R;
-//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(progLamp, false);
-//        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
-//            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
-//            M = T * S * R;
-//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(progLamp, false);
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
-//            M = T * S * R;
-//            glUniform3fv(progLamp->getUniform("Color"), 1, &exitColor[0]);
-//            glUniformMatrix4fv(progLamp->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(progLamp, false);
-//        }
-//        progLamp->unbind();
-
-        /************************ City Ground ********************/
-//        progCityGround->bind();
-//        glUniformMatrix4fv(progCityGround->getUniform("P"), 1, GL_FALSE, &P[0][0]);
-//        glUniformMatrix4fv(progCityGround->getUniform("V"), 1, GL_FALSE, &V[0][0]);
-//        glUniformMatrix4fv(progCityGround->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//        glBindVertexArray(VAOBox);
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
-//        S = scale(mat4(1.0f), vec3(20.0f, 1.0f, 20.0f));
-//        T = translate(mat4(1.0f), vec3(0.0, GROUND_OFFSET, 0.0));
-//        M = T * S;
-//        glUniformMatrix4fv(progCityGround->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
-//        progCityGround->unbind();
-
         /************************ Lambo ********************/
         progLambo->bind();
         glUniformMatrix4fv(progLambo->getUniform("P"), 1, GL_FALSE, &P[0][0]);
         glUniformMatrix4fv(progLambo->getUniform("V"), 1, GL_FALSE, &V[0][0]);
         glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        S = scale(mat4(1.0f), vec3(0.9f, 0.9f, 0.9f));
+        S = scale(mat4(1.0f), vec3(CAR_SCALE, CAR_SCALE, CAR_SCALE));
         T = translate(mat4(1.0f), vec3(0, CAR_OFFSET, 0.0) - mycam.pos);
         R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
         R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
         mat4 temp = T * R2 * R * S;
 
-        vec3 offsets[4] = {vec3(0.1, 0.0, 0.4), vec3(-0.1, 0.0, 0.4), vec3(0.1, 0.0, -0.4), vec3(-0.1, 0.0, -0.4)};
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, Texture);
 
+        vec3 offsets[4] = {vec3(CAR_SIDE, 0.0, CAR_TOP), vec3(-CAR_SIDE, 0.0, CAR_TOP), vec3(CAR_SIDE, 0.0, -CAR_TOP), vec3(-CAR_SIDE, 0.0, -CAR_TOP)};
         gameStats.stuck = false;
         for (int i = 0; i < 4; i++) {
             mat4 offset = translate(temp, offsets[i]);
@@ -880,6 +803,7 @@ public:
             oldCamPos = mycam.pos;
             oldCamRot = mycam.rot;
         }
+        vec3 carPos = vec3(M[3][0], 1.3, M[3][2]);
         glUniform1f(progLambo->getUniform("isBraking"), gameStats.isBraking);
         glUniformMatrix4fv(progLambo->getUniform("M"), 1, GL_FALSE, &M[0][0]);
         glUniform3fv(progLambo->getUniform("campos"), 1, &mycam.pos[0]);
@@ -891,6 +815,7 @@ public:
         glUniformMatrix4fv(progCityBuilding->getUniform("P"), 1, GL_FALSE, &P[0][0]);
         glUniformMatrix4fv(progCityBuilding->getUniform("V"), 1, GL_FALSE, &V[0][0]);
         glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glUniform3fv(progCityBuilding->getUniform("carpos"), 1, &carPos[0]);
         glBindVertexArray(VAOBox);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
 
@@ -902,28 +827,62 @@ public:
 		glBindTexture(GL_TEXTURE_2D, mask);
 		glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
+
         glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, streetTex);
+        glBindTexture(GL_TEXTURE_2D, texturePid[0]);
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, texturePid[1]);
+        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_2D, texturePid[2]);
+        glActiveTexture(GL_TEXTURE6);
+        glBindTexture(GL_TEXTURE_2D, texturePid[3]);
+        glActiveTexture(GL_TEXTURE7);
+        glBindTexture(GL_TEXTURE_2D, texturePid[4]);
+        glActiveTexture(GL_TEXTURE8);
+        glBindTexture(GL_TEXTURE_2D, texturePid[5]);
+        glActiveTexture(GL_TEXTURE9);
+        glBindTexture(GL_TEXTURE_2D, texturePid[6]);
+        glActiveTexture(GL_TEXTURE10);
+        glBindTexture(GL_TEXTURE_2D, texturePid[7]);
+        glActiveTexture(GL_TEXTURE11);
+        glBindTexture(GL_TEXTURE_2D, texturePid[8]);
+        glActiveTexture(GL_TEXTURE12);
+        glBindTexture(GL_TEXTURE_2D, texturePid[9]);
+        glActiveTexture(GL_TEXTURE13);
+        glBindTexture(GL_TEXTURE_2D, texturePid[10]);
+        glActiveTexture(GL_TEXTURE14);
+        glBindTexture(GL_TEXTURE_2D, texturePid[11]);
+
         glUniform1f(progCityBuilding->getUniform("isGround"), 0.0);
         glUniform1f(progCityBuilding->getUniform("isLamp"), 0.0);
         for (int i = 0; i < allBuildings.size(); i++) {
             if (!allBuildings[i].isVisible) {
-                continue;
+                S = scale(mat4(1.0f), vec3(1.0f, 1.0f, 1.0f));
+                T = translate(mat4(1.0f), vec3(allBuildings[i].building.x, -2.1, allBuildings[i].building.z));
+                M = T * S * GROUND_ROTATE;
+
+                string texStr = getTextureStr(i);
+                for (int j = 0; j < NUM_TEXTURES; j++) {
+                    string isBlockedJ = isBlocked[j];
+                    if (texStr == isBlockedJ) {
+                        glUniform1f(progCityBuilding->getUniform(isBlockedJ), 1.0);
+                    } else {
+                        glUniform1f(progCityBuilding->getUniform(isBlockedJ), 0.0);
+                    }
+                }
+
+                glUniform1f(progCityBuilding->getUniform("isGround"), 1.0);
+                glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+                glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
+            } else {
+                glUniform1f(progCityBuilding->getUniform("isGround"), 0.0);
+                S = scale(mat4(1.0f), vec3(1.0f, 2+allBuildings[i].building.y, 1.0f));
+                T = translate(mat4(1.0f), allBuildings[i].building);
+                M = T * S;
+                glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+                glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
             }
-            S = scale(mat4(1.0f), vec3(1.0f, 2+allBuildings[i].building.y, 1.0f));
-            T = translate(mat4(1.0f), allBuildings[i].building);
-            M = T * S;
-            glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
         }
-        /******************************* GROUND **************************/
-        glUniform1f(progCityBuilding->getUniform("isGround"), 1.0);
-        glUniform1f(progCityBuilding->getUniform("isLamp"), 0.0);
-        S = scale(mat4(1.0f), vec3(22.0f, 1.0f, 22.0f));
-        T = translate(mat4(1.0f), vec3(TRANSFORM_FLOOR, GROUND_OFFSET, -4.0));
-        M = T * S;
-        glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
 
         /*************************** LAMP ********************************/
         vector<vec3> lamps;
@@ -947,7 +906,6 @@ public:
         R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
         M = T * S * R;
         vec3 lampPos = vec3(M[3][0], 1.3, M[3][2]);
-        cout << "lampPos1: " << lampPos.x << " " << lampPos.y << " " << lampPos.z << endl;
         lamps.push_back(lampPos);
         glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
         glUniform3fv(progCityBuilding->getUniform("lamps"), lamps.size(), reinterpret_cast<GLfloat *>(lamps.data()));
@@ -955,7 +913,6 @@ public:
         T = translate(mat4(1.0f), vec3(19, 0, 17.5));
         M = T * S * R;
         lampPos = vec3(M[3][0], 1.3, M[3][2]);
-        cout << "lampPos2: " << lampPos.x << " " << lampPos.y << " " << lampPos.z << endl;
         lamps.push_back(lampPos);
         glUniformMatrix4fv(progCityBuilding->getUniform("M"), 1, GL_FALSE, &M[0][0]);
         glUniform3fv(progCityBuilding->getUniform("lamps"), lamps.size(), reinterpret_cast<GLfloat *>(lamps.data()));
@@ -1053,66 +1010,15 @@ public:
         glm::mat4 R, T1, R2, R3, T2, T3, R4;
         M = glm::mat4(1);
 
-//        /******************************* LAMP ******************************/
-//        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
-//        vec3 entranceColor = vec3(1.0, 0.0, 0.0);
-//        vec3 exitColor = vec3(0.0, 1.0, 0.0);
-//        glUniformMatrix4fv(shadowProg->getUniform("P"), 1, GL_FALSE, &P[0][0]);
-//        glUniformMatrix4fv(shadowProg->getUniform("V"), 1, GL_FALSE, &V[0][0]);
-//        glActiveTexture(GL_TEXTURE1);
-//        glBindTexture(GL_TEXTURE_2D, FBOtex_shadowMapDepth);
-//        // entrance lamps
-//        S = scale(mat4(1.0f), vec3(1.5, 1.5, 1.5));
-//        T = translate(mat4(1.0f), vec3(17, 0, 17.5));
-//        R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
-//        M = T * S * R;
-//        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//        shapeLamp->draw(shadowProg, false);
-//        T = translate(mat4(1.0f), vec3(19, 0, 17.5));
-//        M = T * S * R;
-//        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//        shapeLamp->draw(shadowProg, false);
-//        // exit lamps
-//        if (getLeftIndex(gameStats.size, exitIndex) < 0) {
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z + 1));
-//            M = T * S;
-//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(shadowProg, false);
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 2, 0, exitBuilding.building.z - 1));
-//            M = T * S;
-//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(shadowProg, false);
-//        } else if (getRightIndex(gameStats.size, exitIndex) < 0) {
-//            R = rotate(mat4(1.0f), (float) -3.14, vec3(0.0f, 1.0f, 0.0f));
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z + 1));
-//            M = T * S * R;
-//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(shadowProg, false);
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 2, 0, exitBuilding.building.z - 1));
-//            M = T * S * R;
-//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(shadowProg, false);
-//        } else if (getUpIndex(gameStats.size, exitIndex) < 0) {
-//            R = rotate(mat4(1.0f), (float) -3.14/2, vec3(0.0f, 1.0f, 0.0f));
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x + 1, 0, exitBuilding.building.z - 2));
-//            M = T * S * R;
-//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(shadowProg, false);
-//            T = translate(mat4(1.0f), vec3(exitBuilding.building.x - 1, 0, exitBuilding.building.z - 2));
-//            M = T * S * R;
-//            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-//            shapeLamp->draw(shadowProg, false);
-//        }
-
         /************************ Lambo ********************/
         glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        S = scale(mat4(1.0f), vec3(0.9f, 0.9f, 0.9f));
+        S = scale(mat4(1.0f), vec3(CAR_SCALE, CAR_SCALE, CAR_SCALE));
         T = translate(mat4(1.0f), vec3(0, CAR_OFFSET, 0.0) - mycam.pos);
         R = rotate(mat4(1.0f), (float) 3.14, vec3(0.0f, 1.0f, 0.0f));
         R2 = rotate(mat4(1.0f), -mycam.rot.y, vec3(0.0, 1.0, 0.0));
         mat4 temp = T * R2 * R * S;
 
-        vec3 offsets[4] = {vec3(0.1, 0.0, 0.4), vec3(-0.1, 0.0, 0.4), vec3(0.1, 0.0, -0.4), vec3(-0.1, 0.0, -0.4)};
+        vec3 offsets[4] = {vec3(CAR_SIDE, 0.0, CAR_TOP), vec3(-CAR_SIDE, 0.0, CAR_TOP), vec3(CAR_SIDE, 0.0, -CAR_TOP), vec3(-CAR_SIDE, 0.0, -CAR_TOP)};
 
         gameStats.stuck = false;
         for (int i = 0; i < 4; i++) {
@@ -1144,27 +1050,22 @@ public:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
         for (int i = 0; i < allBuildings.size(); i++) {
             if (!allBuildings[i].isVisible) {
-                continue;
+                S = scale(mat4(1.0f), vec3(1.0f, 1.0f, 1.0f));
+                T = translate(mat4(1.0f), vec3(allBuildings[i].building.x, -2.1, allBuildings[i].building.z));
+                M = T * S * GROUND_ROTATE;
+                glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+                glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
+            } else {
+                S = scale(mat4(1.0f), vec3(1.0f, 2+allBuildings[i].building.y, 1.0f));
+                T = translate(mat4(1.0f), allBuildings[i].building);
+                M = T * S;
+                glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+                glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
             }
-            S = scale(mat4(1.0f), vec3(1.0f, 2+allBuildings[i].building.y, 1.0f));
-            T = translate(mat4(1.0f), allBuildings[i].building);
-            M = T * S;
-            glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
         }
 
-        /************************ City Ground ********************/
-        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        glBindVertexArray(VAOBox);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOBoxIndex);
-        S = scale(mat4(1.0f), vec3(22.0f, 1.0f, 22.0f));
-        T = translate(mat4(1.0f), vec3(TRANSFORM_FLOOR, GROUND_OFFSET, -4.0));
-        M = T * S;
-        glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void*)0);
-
         /*************************** LAMP ********************************/
-        vec3 lampPos = vec3(-2.0, 0.12, -1.0);
+        vector<vec3> lamps;
         vec3 entranceColor = vec3(1.0, 0.0, 0.0);
         vec3 exitColor = vec3(0.0, 1.0, 0.0);
         glUniform3fv(shadowProg->getUniform("Color"), 1, &entranceColor[0]);
@@ -1179,12 +1080,18 @@ public:
         T = translate(mat4(1.0f), vec3(17, 0, 17.5));
         R = rotate(mat4(1.0f), (float) 3.14/2, vec3(0.0f, 1.0f, 0.0f));
         M = T * S * R;
+        vec3 lampPos = vec3(M[3][0], 1.3, M[3][2]);
+        lamps.push_back(lampPos);
         glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glUniform3fv(shadowProg->getUniform("lamps"), lamps.size(), reinterpret_cast<GLfloat *>(lamps.data()));
         shapeLamp->draw(shadowProg, false);
         T = translate(mat4(1.0f), vec3(19, 0, 17.5));
         M = T * S * R;
+        lampPos = vec3(M[3][0], 1.3, M[3][2]);
+        lamps.push_back(lampPos);
         glUniform3fv(shadowProg->getUniform("Color"), 1, &entranceColor[0]);
         glUniformMatrix4fv(shadowProg->getUniform("M"), 1, GL_FALSE, &M[0][0]);
+        glUniform3fv(shadowProg->getUniform("lamps"), lamps.size(), reinterpret_cast<GLfloat *>(lamps.data()));
         shapeLamp->draw(shadowProg, false);
         // exit lamps
         if (getLeftIndex(gameStats.size, exitIndex) < 0) {
@@ -1330,6 +1237,71 @@ public:
 			return -1;
 		}
 		return index + 1;
+	}
+
+    void generateRoadTextures() {
+        int width, height, channels;
+        char filepath[1000];
+        string roadDir = "../resources/roads/" ;
+        unsigned char* data;
+
+        for (int i = 0; i < NUM_TEXTURES; i++) {
+            string str = roadDir + roadTextures[i] + ".jpg";
+            strcpy(filepath, str.c_str());
+            data = stbi_load(filepath, &width, &height, &channels, 4);
+            glGenTextures(1, &texturePid[i]);
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, texturePid[i]);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+            GLuint texLoc = glGetUniformLocation(progCityBuilding->pid, roadTextures[i].c_str());
+            glUniform1i(texLoc, i+3);
+        }
+    }
+
+    string getTextureStr(int i) {
+        float top = getUpIndex(gameStats.size, i);
+        float right = getRightIndex(gameStats.size, i);
+        float bottom = getDownIndex(gameStats.size, i);
+        float left = getLeftIndex(gameStats.size, i);
+
+        bool blockedTop = top > -0.5 && allBuildings[top].isVisible;
+        bool blockedRight = right > -0.5 && allBuildings[right].isVisible;
+        bool blockedBottom = bottom > -0.5 && allBuildings[bottom].isVisible;
+        bool blockedLeft = left > -0.5 && allBuildings[left].isVisible;
+
+        if (blockedLeft && blockedRight && !blockedTop && !blockedBottom) {
+            return "isRoad2WayVertical";
+        } else if (!blockedLeft && !blockedRight && blockedTop && blockedBottom) {
+            return "isRoad2WayHorizontal";
+        } else if (!blockedLeft && !blockedRight && !blockedTop && blockedBottom) {
+            return "isRoad3WayNoBottom";
+        } else if (blockedLeft && !blockedRight && !blockedTop && !blockedBottom) {
+            return "isRoad3WayNoLeft";
+        } else if (!blockedLeft && blockedRight && !blockedTop && !blockedBottom) {
+            return "isRoad3WayNoRight";
+        } else if (!blockedLeft && !blockedRight && blockedTop && !blockedBottom) {
+            return "isRoad3WayNoTop";
+        } else if (!blockedLeft && !blockedRight && !blockedTop && !blockedBottom) {
+            return "isRoad4Way";
+        } else if (blockedLeft && !blockedRight && !blockedTop && blockedBottom) {
+            return "isRoadCornerBottomLeft";
+        } else if (!blockedLeft && blockedRight && !blockedTop && blockedBottom) {
+            return "isRoadCornerBottomRight";
+        } else if (blockedLeft && !blockedRight && blockedTop && !blockedBottom) {
+            return "isRoadCornerTopLeft";
+        } else if (!blockedLeft && blockedRight && blockedTop && !blockedBottom) {
+            return "isRoadCornerTopRight";
+        } else if (blockedLeft && blockedRight && !blockedTop && blockedBottom) {
+            return "isRoad1WayBottom";
+        } else {
+            return "isRoad4Way";
+        }
+
 	}
 
 };
