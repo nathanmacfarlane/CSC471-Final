@@ -89,13 +89,17 @@ public:
         pos = vec3(-18, -14, -17);
 	}
 	void incrementSpeed() {
-        if (gameStats.carSpeed < 3.0) {
-            gameStats.carSpeed += 0.07;
+	    if (gameStats.carSpeed < 0) {
+	        gameStats.carSpeed += 0.9;
+	    } else if (gameStats.carSpeed < 2.0) {
+            gameStats.carSpeed += 0.03;
         }
 	}
     void decrementSpeed() {
-        if (gameStats.carSpeed > -2.0) {
-            gameStats.carSpeed -= 0.07;
+        if (gameStats.carSpeed > 0) {
+            gameStats.carSpeed -= 0.09;
+        } else if (gameStats.carSpeed > -2.0) {
+            gameStats.carSpeed -= 0.03;
         }
     }
 	glm::mat4 process(double ftime)
@@ -110,9 +114,9 @@ public:
         } else {
             // bring to zero
             if (gameStats.carSpeed < 0) {
-                gameStats.carSpeed += 0.01;
+                gameStats.carSpeed += 0.07;
             } else if (gameStats.carSpeed > 0) {
-                gameStats.carSpeed -= 0.01;
+                gameStats.carSpeed -= 0.07;
             }
             gameStats.isBraking = 0.0;
         }
@@ -121,10 +125,10 @@ public:
 
 		float yangle=0;
 
-		if (a == 1)
-			yangle = -(M_PI/2)*ftime * 1.5;
-		else if(d==1)
-			yangle = (M_PI/2)*ftime * 1.5;
+		if (a == 1 && abs(speed) > 0.01)
+			yangle = -(M_PI/2)*ftime * 1.1;
+		else if(d==1 && abs(speed) > 0.01)
+			yangle = (M_PI/2)*ftime * 1.1;
 
         double xangle = (M_PI/2);
         rot.x = xangle;
