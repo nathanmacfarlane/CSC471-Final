@@ -39,6 +39,7 @@ uniform sampler2D road1WayBottom;
 in vec3 lps[10];
 uniform float isGround;
 uniform float isLamp;
+uniform float highBeams;
 in vec4 fragLightSpacePos;
 
 // Evaluates how shadowed a point is using PCF with 5 samples
@@ -79,6 +80,7 @@ float calcShadowFactor(vec4 lightSpacePosition) {
 void main()
 {
     float shadowFactor = calcShadowFactor(fragLightSpacePos);
+    float highs = 0.3;
     if (isLamp > 0.5) {
         color.rgb = vec3(0.2, 0.2, 0.2) + shadowFactor * 0.9;
         color.rgb = vec3(0.1, 0.1, 0.1);
@@ -112,12 +114,16 @@ void main()
             color.rgb = vec3(0.3, 0.3, 0.3);
         }
 
-       color.rgb *= vec3(0.3,0.3,0.3) * 0.1 + shadowFactor * 0.9;
+        if (highBeams > 0.5) {
+            highs = 1.0;
+        }
+
+        color.rgb *= vec3(0.3,0.3,0.3) * 0.1 + shadowFactor * highs;
 
     } else {
         color.rgb = texture(tex, vertex_tex).rgb;
         if (!(color.r > 0.5 && color.g > 0.5 && color.b > 0.5)) {
-            color.rgb *= 0.1 + shadowFactor * 0.9;
+            color.rgb *= 0.1 + shadowFactor * highs;
         }
     }
 

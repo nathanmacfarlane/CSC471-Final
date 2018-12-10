@@ -45,6 +45,7 @@ struct GameStats {
 	bool stuck;
 	double carSpeed;
 	float isBraking = false;
+	float highBeams = 0.0;
 };
 #define M_PI 3.1415926
 #define SHADOW_DIM 1024
@@ -81,7 +82,7 @@ class camera
 {
 public:
 	glm::vec3 pos, rot;
-	int w, a, s, d;
+	int w, a, s, d, h;
 	camera()
 	{
 		w = a = s = d = 0;
@@ -92,14 +93,14 @@ public:
 	    if (gameStats.carSpeed < 0) {
 	        gameStats.carSpeed += 0.9;
 	    } else if (gameStats.carSpeed < 2.0) {
-            gameStats.carSpeed += 0.03;
+            gameStats.carSpeed += 0.05;
         }
 	}
     void decrementSpeed() {
         if (gameStats.carSpeed > 0) {
             gameStats.carSpeed -= 0.09;
         } else if (gameStats.carSpeed > -2.0) {
-            gameStats.carSpeed -= 0.03;
+            gameStats.carSpeed -= 0.05;
         }
     }
 	glm::mat4 process(double ftime)
@@ -121,13 +122,19 @@ public:
             gameStats.isBraking = 0.0;
         }
 
+        if (h == 1) {
+            gameStats.highBeams = 1.0;
+        } else if (h == 0) {
+            gameStats.highBeams = 0.0;
+        }
+
         speed = -5 * ftime * gameStats.carSpeed;
 
 		float yangle=0;
 
-		if (a == 1 && abs(speed) > 0.01)
+		if (a == 1)
 			yangle = -(M_PI/2)*ftime * 1.1;
-		else if(d==1 && abs(speed) > 0.01)
+		else if(d==1)
 			yangle = (M_PI/2)*ftime * 1.1;
 
         double xangle = (M_PI/2);
@@ -215,6 +222,9 @@ public:
 			if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
 				mycam.d = 0;
 			}
+            if (key == GLFW_KEY_H && action == GLFW_PRESS) {
+                mycam.h = mycam.h > 0.5 ? 0.0 : 1.0;
+            }
 		}
 	}
 
@@ -350,6 +360,7 @@ public:
         progCityBuilding->addUniform("lamps");
         progCityBuilding->addUniform("isGround");
         progCityBuilding->addUniform("isLamp");
+        progCityBuilding->addUniform("highBeams");
         progCityBuilding->addUniform("isRoad2WayHorizontal");
         progCityBuilding->addUniform("isRoad2WayVertical");
         progCityBuilding->addUniform("isRoad3WayNoBottom");
@@ -857,6 +868,7 @@ public:
         glActiveTexture(GL_TEXTURE14);
         glBindTexture(GL_TEXTURE_2D, texturePid[11]);
 
+        glUniform1f(progCityBuilding->getUniform("highBeams"), gameStats.highBeams);
         glUniform1f(progCityBuilding->getUniform("isGround"), 0.0);
         glUniform1f(progCityBuilding->getUniform("isLamp"), 0.0);
         for (int i = 0; i < allBuildings.size(); i++) {
